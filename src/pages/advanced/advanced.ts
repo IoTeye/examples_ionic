@@ -122,10 +122,10 @@ export class AdvancedPage {
 
     // Initial state
     this.state = {
-      enabled: false,
-      isMoving: false,
+      enabled: true,
+      isMoving: true,
       geofenceProximityRadius: 1000,
-      trackingMode: 'location',
+      trackingMode: 'geofence',
       isChangingPace: false,
       activityIcon: this.iconMap['activity_unknown'],
       odometer: 0,
@@ -144,6 +144,9 @@ export class AdvancedPage {
       this.configureMap();
       this.configureBackgroundGeolocation();
     });
+    if (!this.state.enabled)
+      this.state.enabled = true;
+    this.onToggleEnabled();
   }
 
   /**

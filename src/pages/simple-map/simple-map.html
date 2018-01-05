@@ -1,11 +1,8 @@
 <ion-header>
   <ion-navbar mode="ios" color="gold">
     <ion-title mode="ios">
-      BG Geolocation Demo
+      Mobile Agent Demo
     </ion-title>
-    <ion-buttons end>
-    	<ion-toggle [(ngModel)]="enabled" (ionChange)="onToggleEnabled()" style="display:block;"></ion-toggle>
-    </ion-buttons>
   </ion-navbar>  
 </ion-header>
 
@@ -53,12 +50,27 @@
      	</ion-fab-list>
     </ion-fab>
 
+  <ion-fab top center edge>
+    <button ion-fab color="gold" (click)="onClickMainMenu2()">
+        <ion-icon color="dark" name="arrow-dropdown-circle"></ion-icon>
+    </button>
+    <ion-fab-list> 
+      <ion-item *ngFor="let device of devices">
+      <h2>{{count}}:{{ device.name || 'Unnamed' }}{{ device.id }}RSSI: {{ device.rssi }} </h2>
+      </ion-item>  
+    </ion-fab-list>
+  </ion-fab>
+
 	<!-- Google Map Element -->
   <div #map id="map"></div>
 
 </ion-content>
 
-<ion-footer>	
+<ion-footer>
+  <ion-toolbar>
+    <p>{{ statusMessage }}</p>
+  </ion-toolbar>
+
 	<ion-toolbar mode="ios" color="gold">
 		<ion-buttons start>
 			<button ion-button solid (click)="onClickGetCurrentPosition()" color="primary" style="width:50px">
@@ -73,7 +85,6 @@
 				<ion-icon name="{{isMoving ? 'pause' : 'play'}}"></ion-icon>
 			</button>
 		</ion-buttons>
-
 	</ion-toolbar>
 </ion-footer>
 

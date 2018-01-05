@@ -4,9 +4,10 @@
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
+
 <ion-header>
   <ion-navbar color="gold">
-    <ion-title mode="ios">BG Geolocation</ion-title>
+    <ion-title mode="ios">Mobile Agent</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -20,7 +21,7 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('HelloWorldPage')" color="gold">Hello World</button>
+        <button ion-button full round (click)="onNavigation('HelloWorldPage')" color="gold">Unusual Events</button>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -30,12 +31,12 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('SimpleMapPage')" color="gold">Simple Map</button>
+        <button ion-button full round (click)="onNavigation('SimpleMapPage')" color="gold">Indoors Map</button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('AdvancedPage')" color="gold">Advanced</button>
+        <button ion-button full round (click)="onNavigation('AdvancedPage')" color="gold">Outdoors Map</button>
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -44,8 +45,8 @@
 <ion-footer>
   <ion-navbar color="light">
     <p style="padding:5px">
-      These apps will post locations to Transistor Software's demo server.  You can view your tracking in the browser by visiting:</p>
-    <p style="text-align:center"><i>tracker.transistorsoft.com/<strong [innerHTML]="trackerUsername"></strong></i></p>
+      These apps will post locations to IoT Eye cloud server.  You can view your tracking in the browser by visiting:</p>
+    <p style="text-align:center"><i>tracker.ioteyeinc.com/<strong [innerHTML]="trackerUsername"></strong></i></p>
     <ion-item>
       <ion-label color="primary">Username:</ion-label>
       <ion-input [(ngModel)]="trackerUsername" readonly="true"></ion-input>

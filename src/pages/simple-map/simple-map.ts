@@ -19,6 +19,9 @@ import {
 import { Device } from '@ionic-native/device';
 import { Dialogs } from '@ionic-native/dialogs';
 
+// BLE
+import { BLE } from '@ionic-native/ble';
+
 // Handy color & sound constants.
 import COLORS from '../../lib/colors';
 import SOUND_MAP from '../../lib/sound-map';
@@ -56,6 +59,7 @@ export class SimpleMapPage {
   menuActive: boolean;
   motionActivity: string;
   odometer: string;
+  menu2Active: boolean;
 
   // Google Map references
   map: any;
@@ -64,6 +68,11 @@ export class SimpleMapPage {
   lastLocation: any;
   stationaryRadiusCircle: any;
   polyline: any;  
+
+  // BLE
+  devices: any[] = [];
+  statusMessage: string;
+  count: number;
 
   constructor(
     public navCtrl: NavController,
@@ -74,29 +83,36 @@ export class SimpleMapPage {
     private zone:NgZone, 
     private platform:Platform, 
     private device:Device,
-    private dialogs:Dialogs
+    private dialogs:Dialogs,
+    private ble: BLE,
+    private ngZone: NgZone
   ) {
     this.platform.ready().then(this.onDeviceReady.bind(this));
 
     this.state = {};
     // BackgroundGeolocation initial config.
-    this.isMoving = false;
-    this.enabled = false;
+    this.isMoving = true;
+    this.enabled = true;
     this.autoSync = true;
     this.distanceFilter = 10;
     this.stopTimeout = 1;
     this.stopOnTerminate = false;
     this.startOnBoot = true;
     this.debug = true;
+    this.count = 0;
 
     // UI members.
     this.motionActivity = 'Activity';
     this.menuActive = false;
+    this.menu2Active = false;
+
+    setInterval(this.scan.bind(this), 5000);
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad HomePage');
     this.configureMap();
+    this.onToggleEnabled();
   }
 
   onDeviceReady() {
@@ -179,7 +195,54 @@ export class SimpleMapPage {
       });      
     });    
   }
- 
+
+// BLE events 
+  scan() {
+      this.devices = [];  // clear list
+    this.setStatus('Scanning for Bluetooth LE Devices');
+/*
+    this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
+      device => this.onDeviceDiscovered(device), 
+      error => this.scanError(error)
+    );
+*/
+    this.ble.scan([],3).subscribe(
+      device => this.onDeviceDiscovered(device), 
+      error => this.scanError(error)
+    );
+//    setTimeout(this.setStatus.bind(this), 5000, 'Scan complete');
+//    setTimeout(this.ble.stopScan, 3000);
+  }
+
+  onDeviceDiscovered(device) {
+
+    console.log('Discovered ' + JSON.stringify(device, null, 2));
+    this.ngZone.run(() => {
+      this.count = this.devices.length;
+      if (this.devices.length > 5)
+        this.devices.shift();
+      this.devices.push(device);
+    });
+  }
+
+  // If location permission is denied, you'll end up here
+  scanError(error) {
+    this.setStatus('Error ' + error);
+    let toast = this.toastCtrl.create({
+      message: 'Error scanning for Bluetooth low energy devices',
+      position: 'middle',
+      duration: 5000
+    });
+    toast.present();
+  }
+
+  setStatus(message) {
+    console.log(message);
+    this.ngZone.run(() => {
+      this.statusMessage = message;
+    });
+  }
+
   /**
   * @event location
   */
@@ -261,6 +324,11 @@ export class SimpleMapPage {
   onClickMainMenu(item) {
     this.menuActive = !this.menuActive;
     this.playSound((this.menuActive) ? 'OPEN' : 'CLOSE');
+  }
+
+  onClickMainMenu2(item) {
+    this.menu2Active = !this.menu2Active;
+    this.playSound((this.menu2Active) ? 'OPEN' : 'CLOSE');
   }
 
   onClickSync() {
@@ -397,7 +465,15 @@ export class SimpleMapPage {
       this.bgGeo.stop((state) => {
         console.log('- Stop success: ', state);        
       });
-    }    
+    }
+/*
+    if (this.enabled) {
+      this.scan()
+    } else {
+      this.ble.stopScan();
+      this.setStatus('Scan complete');
+    }
+*/        
   }
   /**
   * Toggle moving / stationary state

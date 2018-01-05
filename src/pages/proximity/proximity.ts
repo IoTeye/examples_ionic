@@ -9,7 +9,10 @@ import { BLE } from '@ionic-native/ble';
   templateUrl: 'proximity.html'
 })
 export class ProximityPage {
-  
+ /**
+  * @property {Object} state
+  */
+  state: any;  
   devices: any[] = [];
   statusMessage: string;
 
@@ -17,6 +20,11 @@ export class ProximityPage {
               private toastCtrl: ToastController,
               private ble: BLE,
               private ngZone: NgZone) { 
+    // Initial state
+    this.state = {
+      enabled: true,
+      count:0
+    }
   }
 
   // Return to Home screen (app switcher)
@@ -26,24 +34,25 @@ export class ProximityPage {
 
   ionViewDidEnter() {
     console.log('ionViewDidEnter');
-    this.scan();
+    this.onToggleEnabled();
   }
 
   scan() {
     this.setStatus('Scanning for Bluetooth LE Devices');
     this.devices = [];  // clear list
 
-    this.ble.scan([], 5).subscribe(
+    this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
       device => this.onDeviceDiscovered(device), 
       error => this.scanError(error)
     );
 
-    setTimeout(this.setStatus.bind(this), 5000, 'Scan complete');
+//    setTimeout(this.setStatus.bind(this), 5000, 'Scan complete');
   }
 
   onDeviceDiscovered(device) {
     console.log('Discovered ' + JSON.stringify(device, null, 2));
     this.ngZone.run(() => {
+//      this.state.count = this.state.count + 1;
       this.devices.push(device);
     });
   }
@@ -64,6 +73,15 @@ export class ProximityPage {
     this.ngZone.run(() => {
       this.statusMessage = message;
     });
+  }
+
+  onToggleEnabled() {
+    if (this.state.enabled == true) {
+      this.scan();
+    } else {
+      this.ble.stopScan();
+      this.setStatus('Scan complete');
+    }
   }
 
 }

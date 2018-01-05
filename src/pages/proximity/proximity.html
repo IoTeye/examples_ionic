@@ -6,18 +6,13 @@
     <ion-buttons start>
       <button ion-button (click)="onClickHome()" color="primary">Home</button>
     </ion-buttons>
-    <ion-buttons end>
-      <button ion-button (click)="scan()">
-        Scan
-      </button>
-    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
    <ion-list> 
     <button ion-item *ngFor="let device of devices">
-      <h2>{{ device.name || 'Unnamed' }}</h2>
+      <h2>{{state.count}}:{{ device.name || 'Unnamed' }}</h2>
       <p>{{ device.id }}</p>
       <p>RSSI: {{ device.rssi }}</p>
     </button>  
