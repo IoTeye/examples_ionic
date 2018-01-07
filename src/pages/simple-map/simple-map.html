@@ -1,7 +1,7 @@
 <ion-header>
   <ion-navbar mode="ios" color="gold">
     <ion-title mode="ios">
-      Mobile Agent Demo
+      Woods Field Trial
     </ion-title>
   </ion-navbar>  
 </ion-header>
@@ -48,29 +48,22 @@
        		<button ion-button color="danger" (click)="onClickDestroyLog()">Destroy</button>
        	</ion-item>        
      	</ion-fab-list>
-    </ion-fab>
-
-  <ion-fab top center edge>
-    <button ion-fab color="gold" (click)="onClickMainMenu2()">
-        <ion-icon color="dark" name="arrow-dropdown-circle"></ion-icon>
-    </button>
-    <ion-fab-list> 
-      <ion-item *ngFor="let device of devices">
-      <h2>{{count}}:{{ device.name || 'Unnamed' }}{{ device.id }}RSSI: {{ device.rssi }} </h2>
-      </ion-item>  
-    </ion-fab-list>
-  </ion-fab>
-
+		</ion-fab>
 	<!-- Google Map Element -->
-  <div #map id="map"></div>
 
+		<ion-list>
+				<ion-item>
+					<h3>{{ statusMessage }}</h3>
+				</ion-item>
+				<ion-item *ngFor="let device of devices">
+					<h4>{{count}}:{{ device.name || 'Unnamed' }}{{ device.id }}RSSI: {{ device.rssi }} </h4>
+				</ion-item>  
+		</ion-list>
+
+		<div #map id="map"></div>
 </ion-content>
 
 <ion-footer>
-  <ion-toolbar>
-    <p>{{ statusMessage }}</p>
-  </ion-toolbar>
-
 	<ion-toolbar mode="ios" color="gold">
 		<ion-buttons start>
 			<button ion-button solid (click)="onClickGetCurrentPosition()" color="primary" style="width:50px">

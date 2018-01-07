@@ -15,8 +15,8 @@
 
   <ion-grid>
     <ion-row>
-      <ion-col text-center>
-        <h1>Example Applications</h1>
+      <ion-col>
+        <button ion-button full round (click)="onNavigation('SimpleMapPage')" color="gold">Field Trial</button>
       </ion-col>
     </ion-row>
     <ion-row>
@@ -31,12 +31,7 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('SimpleMapPage')" color="gold">Indoors Map</button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <button ion-button full round (click)="onNavigation('AdvancedPage')" color="gold">Outdoors Map</button>
+        <button ion-button full round (click)="onNavigation('AdvancedPage')" color="gold">Map</button>
       </ion-col>
     </ion-row>
   </ion-grid>

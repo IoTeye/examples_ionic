@@ -18,9 +18,8 @@ import {
 // Cordova plugins Device & Dialogs
 import { Device } from '@ionic-native/device';
 import { Dialogs } from '@ionic-native/dialogs';
-
-// BLE
 import { BLE } from '@ionic-native/ble';
+//import { Vibration } from '@ionic-native/vibration';
 
 // Handy color & sound constants.
 import COLORS from '../../lib/colors';
@@ -85,6 +84,7 @@ export class SimpleMapPage {
     private device:Device,
     private dialogs:Dialogs,
     private ble: BLE,
+//    private vibration:Vibration,
     private ngZone: NgZone
   ) {
     this.platform.ready().then(this.onDeviceReady.bind(this));
@@ -118,6 +118,7 @@ export class SimpleMapPage {
   onDeviceReady() {
     // We prompt you for a unique identifier in order to post locations tracker.transistorsoft.com
     this.configureBackgroundGeolocation();
+  
   }
 
   private configureBackgroundGeolocation() {
@@ -199,7 +200,7 @@ export class SimpleMapPage {
 // BLE events 
   scan() {
       this.devices = [];  // clear list
-    this.setStatus('Scanning for Bluetooth LE Devices');
+    this.setStatus('*************** Supervising Client Activity');
 /*
     this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
       device => this.onDeviceDiscovered(device), 
@@ -218,7 +219,9 @@ export class SimpleMapPage {
 
     console.log('Discovered ' + JSON.stringify(device, null, 2));
     this.ngZone.run(() => {
-      this.count = this.devices.length;
+      this.count = this.count + 1;
+      if (device.rssi < -100)
+        navigator.vibrate(500);
       if (this.devices.length > 5)
         this.devices.shift();
       this.devices.push(device);

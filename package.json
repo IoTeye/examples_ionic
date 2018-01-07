@@ -28,7 +28,8 @@
     "@angular/http": "5.0.1",
     "@angular/platform-browser": "5.0.1",
     "@angular/platform-browser-dynamic": "5.0.1",
-    "@ionic-native/ble": "^4.0.0",
+    "@ionic-native/ble": "^4.4.2",
+    "@ionic-native/vibration": "^4.4.2",
     "@ionic-native/core": "4.4.2",
     "@ionic-native/device": "4.4.2",
     "@ionic-native/dialogs": "4.4.2",
@@ -40,6 +41,7 @@
     "cordova-ios": "^4.5.4",
     "cordova-plugin-background-fetch": "^5.1.1",
     "cordova-plugin-ble-central": "^1.1.4",
+    "cordova-plugin-vibration": "^3.0.1",
     "cordova-plugin-cocoalumberjack": "0.0.4",
     "cordova-plugin-compat": "^1.2.0",
     "cordova-plugin-console": "^1.1.0",
@@ -73,6 +75,7 @@
       "cordova-plugin-ble-central": {
         "BLUETOOTH_USAGE_DESCRIPTION": " "
       },
+      "cordova-plugin-vibration": {},
       "cordova-plugin-console": {},
       "cordova-plugin-ionic-webview": {},
       "cordova-background-geolocation-lt": {
