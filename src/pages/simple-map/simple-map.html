@@ -1,9 +1,9 @@
 <ion-header>
-  <ion-navbar mode="ios" color="gold">
+  <ion-navbar mode="ios" [color]="isRecording ? 'danger' : 'primary'">
     <ion-title mode="ios">
       Woods Field Trial
     </ion-title>
-  </ion-navbar>  
+	</ion-navbar>
 </ion-header>
 
 <ion-content>
@@ -59,6 +59,21 @@
 					<h4>{{count}}:{{ device.name || 'Unnamed' }}{{ device.id }}RSSI: {{ device.rssi }} </h4>
 				</ion-item>  
 		</ion-list>
+
+		<button ion-button full (click)="getPermission()">Get Permission</button>
+		<button ion-button full (click)="startListening()">Start Listening</button>
+		<button ion-button full (click)="stopListening()" *ngIf="isIos()">Stop Listening</button>
+	 
+		<ion-card>
+			<ion-card-header>This is what I understood...</ion-card-header>
+			<ion-card-content>
+				<ion-list>
+					<ion-item *ngFor="let match of matches">
+						{{ match }}
+					</ion-item>
+				</ion-list>
+			</ion-card-content>
+		</ion-card>
 
 		<div #map id="map"></div>
 </ion-content>

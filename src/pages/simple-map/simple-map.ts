@@ -14,12 +14,14 @@ import {
   LoadingController,
   Platform
 } from 'ionic-angular';
-
+import { ChangeDetectorRef } from '@angular/core';
 // Cordova plugins Device & Dialogs
 import { Device } from '@ionic-native/device';
 import { Dialogs } from '@ionic-native/dialogs';
 import { BLE } from '@ionic-native/ble';
-//import { Vibration } from '@ionic-native/vibration';
+import { Vibration } from '@ionic-native/vibration';
+import { SpeechRecognition } from '@ionic-native/speech-recognition';
+
 
 // Handy color & sound constants.
 import COLORS from '../../lib/colors';
@@ -73,6 +75,10 @@ export class SimpleMapPage {
   statusMessage: string;
   count: number;
 
+  // Speech Recognition
+  matches: String[];
+  isRecording = false;
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -84,7 +90,10 @@ export class SimpleMapPage {
     private device:Device,
     private dialogs:Dialogs,
     private ble: BLE,
-//    private vibration:Vibration,
+    private vibration:Vibration,
+    private speechRecognition: SpeechRecognition,
+    private plt: Platform,
+    private cd: ChangeDetectorRef,
     private ngZone: NgZone
   ) {
     this.platform.ready().then(this.onDeviceReady.bind(this));
@@ -221,7 +230,7 @@ export class SimpleMapPage {
     this.ngZone.run(() => {
       this.count = this.count + 1;
       if (device.rssi < -100)
-        navigator.vibrate(500);
+        this.vibration.vibrate(500);
       if (this.devices.length > 5)
         this.devices.shift();
       this.devices.push(device);
@@ -244,6 +253,37 @@ export class SimpleMapPage {
     this.ngZone.run(() => {
       this.statusMessage = message;
     });
+  }
+
+  // Speech Recognition
+  isIos() {
+    return this.plt.is('ios');
+  }
+
+  stopListening() {
+    this.speechRecognition.stopListening().then(() => {
+      this.isRecording = false;
+    });
+  }
+ 
+  getPermission() {
+    this.speechRecognition.hasPermission()
+      .then((hasPermission: boolean) => {
+        if (!hasPermission) {
+          this.speechRecognition.requestPermission();
+        }
+      });
+  }
+ 
+  startListening() {
+    let options = {
+      language: 'en-US'
+    }
+    this.speechRecognition.startListening().subscribe(matches => {
+      this.matches = matches;
+      this.cd.detectChanges();
+    });
+    this.isRecording = true;
   }
 
   /**
