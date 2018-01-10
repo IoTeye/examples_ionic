@@ -127,7 +127,8 @@ export class SimpleMapPage {
   onDeviceReady() {
     // We prompt you for a unique identifier in order to post locations tracker.transistorsoft.com
     this.configureBackgroundGeolocation();
-  
+    this.getPermission();
+//    setInterval(this.startListening.bind(this), 10000);
   }
 
   private configureBackgroundGeolocation() {
@@ -274,12 +275,16 @@ export class SimpleMapPage {
         }
       });
   }
- 
+
   startListening() {
     let options = {
-      language: 'en-US'
+      language: 'en-US',
+      matches: 1,
+      showPopup: false,
+      prompt: '',
+      showPartial: true
     }
-    this.speechRecognition.startListening().subscribe(matches => {
+    this.speechRecognition.startListening(options).subscribe(matches => {
       this.matches = matches;
       this.cd.detectChanges();
     });

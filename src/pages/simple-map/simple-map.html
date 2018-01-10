@@ -60,19 +60,11 @@
 				</ion-item>  
 		</ion-list>
 
-		<button ion-button full (click)="getPermission()">Get Permission</button>
 		<button ion-button full (click)="startListening()">Start Listening</button>
 		<button ion-button full (click)="stopListening()" *ngIf="isIos()">Stop Listening</button>
 	 
 		<ion-card>
-			<ion-card-header>This is what I understood...</ion-card-header>
-			<ion-card-content>
-				<ion-list>
-					<ion-item *ngFor="let match of matches">
-						{{ match }}
-					</ion-item>
-				</ion-list>
-			</ion-card-content>
+			<ion-card-header>{{matches}}</ion-card-header>
 		</ion-card>
 
 		<div #map id="map"></div>
