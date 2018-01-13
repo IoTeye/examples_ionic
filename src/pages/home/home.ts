@@ -8,18 +8,16 @@ import {
 
 import { Dialogs } from '@ionic-native/dialogs';
 
-const TRACKER_HOST = 'http://tracker.transistorsoft.com/';
+const TRACKER_HOST = 'http://18.218.71.70:9000/';
 
 // Default tracking server username if use doesn't provide one.
-const DEFAULT_USERNAME = "cordova-anonymous";
+const DEFAULT_USERNAME = "woods";
 
 // Only allow alpha-numeric usernames with '-' and '_'
 const USERNAME_VALIDATOR =  /^[a-zA-Z0-9_-]*$/;
 
 /**
- * The HomePage will prompt you for a username so the plugin can post locations to tracker.transistorsoft.com/locations/{username}
- *
- * You can view your tracking in our web app in your browser at http://tracking.transistorsoft.com/{username}
+ * The HomePage 
  */
 
 @IonicPage()
@@ -87,7 +85,7 @@ export class HomePage {
         return;
       }
       // Prompt user to enter a unique identifier for tracker.transistorsoft.com
-      this.dialogs.prompt('Please enter a unique identifier (eg: Github username) so the plugin can post loctions to http://tracker.transistorsoft.com/{identifier}', 'Tracking Server Username', ['OK'], defaultValue).then((response) => {
+      this.dialogs.prompt('Please enter a unique identifier to post loctions to http://tracker.ioteyeinc.com/{identifier}', 'Tracking Server Username', ['OK'], defaultValue).then((response) => {
         let username = response.input1.replace(/\s+/, '');
         if (!username.length) {
           this.dialogs.alert("You must enter a username.  It can be any unique alpha-numeric identifier.", "Username required").then(() => {

@@ -37,7 +37,7 @@ The demo is composed of four separate and indpendant sub-applications implemente
 
 ## :large_blue_diamond: Tracking Server
 
-The demo app is configured to post locations to IoTeye's demo server, which hosts a web-application for visualizing and filtering your tracking on a map.
+The app is configured to post locations to IoTeye's demo server, which hosts a web-application for visualizing and filtering your tracking on a map.
 
 - After booting the app the first time, you'll be asked to enter a **unique** "Tracking Server Username" (eg: Github username) so the plugin can post locations to `tracker.ioteyeinc.com`.  
 

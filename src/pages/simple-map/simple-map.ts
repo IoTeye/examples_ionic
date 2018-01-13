@@ -31,7 +31,9 @@ import SOUND_MAP from '../../lib/sound-map';
 declare var google;
 
 // Transistor Software Tracking Server Host
-const TRACKER_HOST = 'http://tracker.transistorsoft.com/locations/';
+const TRACKER_HOST = 'http://18.218.71.70:9000/locations/';
+
+var refreshIntervalId;
 
 @IonicPage()
 @Component({
@@ -74,6 +76,7 @@ export class SimpleMapPage {
   devices: any[] = [];
   statusMessage: string;
   count: number;
+  scan_period: number;
 
   // Speech Recognition
   matches: String[];
@@ -115,7 +118,8 @@ export class SimpleMapPage {
     this.menuActive = false;
     this.menu2Active = false;
 
-    setInterval(this.scan.bind(this), 5000);
+    this.scan_period = 5000;
+    refreshIntervalId = setInterval(this.scan.bind(this), this.scan_period);
   }
 
   ionViewDidLoad() {
@@ -204,7 +208,7 @@ export class SimpleMapPage {
       }, (state) => {
         console.log('- Configure success: ', state);        
       });      
-    });    
+    });
   }
 
 // BLE events 
@@ -467,6 +471,13 @@ export class SimpleMapPage {
   }
 
   onSetConfig(name) {
+    if (name == 'scan_period') {
+      // Set BLE
+      clearInterval(refreshIntervalId);
+      this.scan_period = parseInt(this[name], 10);
+      refreshIntervalId = setInterval(this.scan.bind(this), this.scan_period);
+      return;
+    }
     if (this.state[name] === this[name]) {
       // No change.  do nothing.
       return;

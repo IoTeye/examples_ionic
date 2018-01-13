@@ -11,7 +11,7 @@ if (!fs.existsSync(consoleConfigPath)) {
   const generatedContent = `
 // generated automatically, but feel free to change
 // and remove from a gitignore file
-exports.defaultLocationUrl = 'http://tracker.transistorsoft.com/locations';
+exports.defaultLocationUrl = 'http://tracker.ioteyeinc.com/locations';
 exports.companyToken = '${companyToken}';
   `;
   fs.writeFileSync(consoleConfigPath, generatedContent, 'utf-8');
