@@ -32,6 +32,7 @@ declare var google;
 
 // Transistor Software Tracking Server Host
 const TRACKER_HOST = 'http://18.218.71.70:9000/locations/';
+//const TRACKER_HOST = 'http://192.168.1.139:9000/locations/';
 
 var refreshIntervalId;
 
@@ -199,6 +200,9 @@ export class SimpleMapPage {
             manufacturer: this.device.manufacturer,
             framework: 'Cordova'
           }
+        },
+        extras: {
+          "usualevent": "Jesus Love me"
         },
         autoSync: this.autoSync,
         autoSyncThreshold: 0,
@@ -525,14 +529,6 @@ export class SimpleMapPage {
         console.log('- Stop success: ', state);        
       });
     }
-/*
-    if (this.enabled) {
-      this.scan()
-    } else {
-      this.ble.stopScan();
-      this.setStatus('Scan complete');
-    }
-*/        
   }
   /**
   * Toggle moving / stationary state

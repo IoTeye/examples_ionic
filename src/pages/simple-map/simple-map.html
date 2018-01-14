@@ -13,10 +13,8 @@
       	</button>
    		<ion-fab-list side="bottom" style="width:250px">   			
 			<ion-item>
-			<button ion-button full round color="primary" (click)="onClickHome()"><ion-icon name="home"></ion-icon>&nbsp;Home</button>
-			</ion-item>
-			<ion-item>
-				<button ion-button color="primary" (click)="onClickSync()"><ion-icon name="ios-cloud-upload"></ion-icon>&nbsp;Sync</button>
+				<button ion-button round color="primary" (click)="onClickHome()"><ion-icon name="home"></ion-icon>&nbsp;Home</button>
+				<button ion-button round color="primary" (click)="onClickSync()"><ion-icon name="ios-cloud-upload"></ion-icon>&nbsp;Sync</button>
 			</ion-item>
 			<ion-item>
 				<ion-label>distanceFilter</ion-label>
@@ -27,29 +25,29 @@
 				<ion-input [(ngModel)]="stopTimeout" (blur)="onSetConfig('stopTimeout')" type="number"></ion-input>
 			</ion-item>
 			<ion-item>
-					<ion-label>BLEscanPeriod</ion-label>
-					<ion-input [(ngModel)]="scan_period" (blur)="onSetConfig('scan_period')" type="number"></ion-input>
+				<ion-label>BLEscanPeriod</ion-label>
+				<ion-input [(ngModel)]="scan_period" (blur)="onSetConfig('scan_period')" type="number"></ion-input>
 			</ion-item>
      	</ion-fab-list>
 	</ion-fab>
 
-		<ion-list>
-				<ion-item>
-					<h3>{{ statusMessage }}</h3>
-				</ion-item>
-				<ion-item *ngFor="let device of devices">
-					<h4>{{count}}:{{ device.name || 'Unnamed' }}{{ device.id }}RSSI: {{ device.rssi }} </h4>
-				</ion-item>  
-		</ion-list>
-		<!-->
-		<button ion-button full (click)="startListening()">Start Listening</button>
-		<button ion-button full (click)="stopListening()" *ngIf="isIos()">Stop Listening</button>	 
-		<ion-card>
-			<ion-card-header>{{matches}}</ion-card-header>
-		</ion-card>
-		</-->
-	<!-- Google Map Element -->
-		<div #map id="map"></div>
+	<ion-list>
+			<ion-item>
+				<h3>{{ statusMessage }}</h3>
+			</ion-item>
+			<ion-item *ngFor="let device of devices">
+				<h4>{{count}}:{{ device.name || 'Unnamed' }}{{ device.id }}RSSI: {{ device.rssi }} </h4>
+			</ion-item>  
+	</ion-list>
+	<!-->
+	<button ion-button full (click)="startListening()">Start Listening</button>
+	<button ion-button full (click)="stopListening()" *ngIf="isIos()">Stop Listening</button>	 
+	<ion-card>
+		<ion-card-header>{{matches}}</ion-card-header>
+	</ion-card>
+	</-->
+<!-- Google Map Element -->
+	<div #map id="map"></div>
 </ion-content>
 
 <ion-footer>
