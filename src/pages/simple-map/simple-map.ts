@@ -35,6 +35,7 @@ const TRACKER_HOST = 'http://18.218.71.70:9000/locations/';
 //const TRACKER_HOST = 'http://192.168.1.139:9000/locations/';
 
 var refreshIntervalId;
+var unusualEvent;
 
 @IonicPage()
 @Component({
@@ -111,7 +112,7 @@ export class SimpleMapPage {
     this.stopTimeout = 1;
     this.stopOnTerminate = false;
     this.startOnBoot = true;
-    this.debug = true;
+    this.debug = false;
     this.count = 0;
 
     // UI members.
@@ -121,6 +122,7 @@ export class SimpleMapPage {
 
     this.scan_period = 5000;
     refreshIntervalId = setInterval(this.scan.bind(this), this.scan_period);
+    unusualEvent = '';
   }
 
   ionViewDidLoad() {
@@ -202,7 +204,7 @@ export class SimpleMapPage {
           }
         },
         extras: {
-          "usualevent": "Jesus Love me"
+          "usualevent": "Jesus Loves us"
         },
         autoSync: this.autoSync,
         autoSyncThreshold: 0,
@@ -217,7 +219,7 @@ export class SimpleMapPage {
 
 // BLE events 
   scan() {
-      this.devices = [];  // clear list
+//      this.devices = [];  // clear list
     this.setStatus('*************** Supervising Client Activity');
 /*
     this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
@@ -237,12 +239,38 @@ export class SimpleMapPage {
 
     console.log('Discovered ' + JSON.stringify(device, null, 2));
     this.ngZone.run(() => {
-      this.count = this.count + 1;
-      if (device.rssi < -100)
+
+      if (device.rssi < -100) {
+        this.count = this.count + 1;
         this.vibration.vibrate(500);
-      if (this.devices.length > 5)
+        if (this.devices.length > 2)
         this.devices.shift();
-      this.devices.push(device);
+//            this.devices = [];      
+        this.devices.push(device);
+        unusualEvent = "Patient Faraway";
+      }
+
+      if (unusualEvent == "Patient Faraway") {      
+        this.bgGeo.setConfig({extras: {"usualevent":(this.count).toString() + unusualEvent}}, 
+        function() {
+          console.log('set config success');
+        },
+        function() {
+          console.log('failed to setConfig');
+        });
+        this.bgGeo.getCurrentPosition((location) => {
+          console.log('- getCurrentPosition success: ', location);
+            unusualEvent = "All good";          
+            this.bgGeo.setConfig({extras: {"usualevent":unusualEvent}}, 
+              function() {
+                console.log('set config success');
+              },
+              function() {
+                console.log('failed to setConfig');
+              });
+        });
+      }
+
     });
   }
 
