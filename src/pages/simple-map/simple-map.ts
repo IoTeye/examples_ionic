@@ -32,7 +32,7 @@ declare var google;
 
 // Transistor Software Tracking Server Host
 const TRACKER_HOST = 'http://18.218.71.70:9000/locations/';
-//const TRACKER_HOST = 'http://192.168.1.139:9000/locations/';
+//const TRACKER_HOST = 'http://192.168.1.9:9000/locations/';
 
 var refreshIntervalId;
 var unusualEvent;
@@ -79,6 +79,9 @@ export class SimpleMapPage {
   statusMessage: string;
   count: number;
   scan_period: number;
+  far_threshold: number;
+  mid_threshold: number;
+  near_threshold: number;
 
   // Speech Recognition
   matches: String[];
@@ -121,6 +124,9 @@ export class SimpleMapPage {
     this.menu2Active = false;
 
     this.scan_period = 5000;
+    this.far_threshold = -100;
+    this.mid_threshold = -75;
+    this.near_threshold = -50;    
     refreshIntervalId = setInterval(this.scan.bind(this), this.scan_period);
     unusualEvent = '';
   }
@@ -204,7 +210,7 @@ export class SimpleMapPage {
           }
         },
         extras: {
-          "usualevent": "Jesus Loves us"
+          "Unusualevent": ""
         },
         autoSync: this.autoSync,
         autoSyncThreshold: 0,
@@ -240,7 +246,7 @@ export class SimpleMapPage {
     console.log('Discovered ' + JSON.stringify(device, null, 2));
     this.ngZone.run(() => {
 
-      if (device.rssi < -100) {
+      if (device.rssi < this.far_threshold) {
         this.count = this.count + 1;
         this.vibration.vibrate(500);
         if (this.devices.length > 2)
@@ -249,9 +255,11 @@ export class SimpleMapPage {
         this.devices.push(device);
         unusualEvent = "Patient Faraway";
       }
+      else
+        return;
 
       if (unusualEvent == "Patient Faraway") {      
-        this.bgGeo.setConfig({extras: {"usualevent":(this.count).toString() + unusualEvent}}, 
+        this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + device.id + " " + (device.rssi).toString()}}, 
         function() {
           console.log('set config success');
         },
@@ -260,8 +268,8 @@ export class SimpleMapPage {
         });
         this.bgGeo.getCurrentPosition((location) => {
           console.log('- getCurrentPosition success: ', location);
-            unusualEvent = "All good";          
-            this.bgGeo.setConfig({extras: {"usualevent":unusualEvent}}, 
+            unusualEvent = "";          
+            this.bgGeo.setConfig({extras: {"Unusualevent":unusualEvent}}, 
               function() {
                 console.log('set config success');
               },
@@ -508,6 +516,21 @@ export class SimpleMapPage {
       clearInterval(refreshIntervalId);
       this.scan_period = parseInt(this[name], 10);
       refreshIntervalId = setInterval(this.scan.bind(this), this.scan_period);
+      return;
+    }
+    if (name == 'far_threshold') {
+      // Set BLE
+      this.far_threshold = parseInt(this[name], 10);
+      return;
+    }
+    if (name == 'mid_threshold') {
+      // Set BLE
+      this.mid_threshold = parseInt(this[name], 10);
+      return;
+    }
+    if (name == 'near_threshold') {
+      // Set BLE
+      this.near_threshold = parseInt(this[name], 10);
       return;
     }
     if (this.state[name] === this[name]) {

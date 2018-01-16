@@ -17,16 +17,20 @@
 				<button ion-button round color="primary" (click)="onClickSync()"><ion-icon name="ios-cloud-upload"></ion-icon>&nbsp;Sync</button>
 			</ion-item>
 			<ion-item>
-				<ion-label>distanceFilter</ion-label>
-				<ion-input [(ngModel)]="distanceFilter" (blur)="onSetConfig('distanceFilter')" type="number"></ion-input>
-			</ion-item>
-			<ion-item>
-				<ion-label>stopTimeout</ion-label>
-				<ion-input [(ngModel)]="stopTimeout" (blur)="onSetConfig('stopTimeout')" type="number"></ion-input>
-			</ion-item>
-			<ion-item>
 				<ion-label>BLEscanPeriod</ion-label>
 				<ion-input [(ngModel)]="scan_period" (blur)="onSetConfig('scan_period')" type="number"></ion-input>
+			</ion-item>
+			<ion-item>
+					<ion-label>FarThreshold</ion-label>
+					<ion-input [(ngModel)]="far_threshold" (blur)="onSetConfig('far_threshold')" type="number"></ion-input>
+			</ion-item>
+			<ion-item>
+					<ion-label>MidThreshold</ion-label>
+					<ion-input [(ngModel)]="mid_threshold" (blur)="onSetConfig('mid_threshold')" type="number"></ion-input>
+			</ion-item>
+			<ion-item>
+					<ion-label>NearThreshold</ion-label>
+					<ion-input [(ngModel)]="near_threshold" (blur)="onSetConfig('near_threshold')" type="number"></ion-input>
 			</ion-item>
      	</ion-fab-list>
 	</ion-fab>
