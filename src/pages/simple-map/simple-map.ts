@@ -250,8 +250,7 @@ export class SimpleMapPage {
         this.count = this.count + 1;
         this.vibration.vibrate(500);
         if (this.devices.length > 2)
-        this.devices.shift();
-//            this.devices = [];      
+          this.devices.shift();
         this.devices.push(device);
         unusualEvent = "Patient Faraway";
       }
@@ -259,7 +258,7 @@ export class SimpleMapPage {
         return;
 
       if (unusualEvent == "Patient Faraway") {      
-        this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + device.id + " " + (device.rssi).toString()}}, 
+        this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + device.id + " Far away"}}, 
         function() {
           console.log('set config success');
         },
