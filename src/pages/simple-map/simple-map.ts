@@ -37,6 +37,20 @@ const TRACKER_HOST = 'http://18.218.71.70:9000/locations/';
 var refreshIntervalId;
 var unusualEvent;
 
+//  DEFAULT_TRANSMITTERS = new Set(['ec149b8cc77d','fed90f07c33d','fda6a51c4598']);
+var DEFAULT_TRANSMITTERS = {
+  'fed90f07c33d': {id:'beacon1'},
+  'fda6a51c4598': {id:'beacon2'},
+  'ec149b8cc77d': {id:'beacon3'},
+  'c935df1aa8bd': {id:'beacon4'},
+  'cf389feb5b65': {id:'beacon5'},
+  'fa1926067aae': {id:'beacon6'},
+  'E8:3F:0B:A3:F6:12': {id:'b13-client'},
+  'D2:3D:87:43:75:1F': {id:'b14-purse'},
+//  'b827ebf7fe86': {id:'mobile1t'}
+  'b827eb6b0298': {id:'mobile1t'}
+};
+
 @IonicPage()
 @Component({
   selector: 'page-simple-map',
@@ -82,6 +96,7 @@ export class SimpleMapPage {
   far_threshold: number;
   mid_threshold: number;
   near_threshold: number;
+  display_items: number;
 
   // Speech Recognition
   matches: String[];
@@ -124,9 +139,10 @@ export class SimpleMapPage {
     this.menu2Active = false;
 
     this.scan_period = 5000;
-    this.far_threshold = -100;
-    this.mid_threshold = -75;
-    this.near_threshold = -50;    
+    this.far_threshold = -80;
+    this.mid_threshold = -70;
+    this.near_threshold = -60;
+    this.display_items = 2;
     refreshIntervalId = setInterval(this.scan.bind(this), this.scan_period);
     unusualEvent = '';
   }
@@ -226,7 +242,7 @@ export class SimpleMapPage {
 // BLE events 
   scan() {
 //      this.devices = [];  // clear list
-    this.setStatus('*************** Supervising Client Activity');
+    this.setStatus('*************** Proximity Supervision');
 /*
     this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
       device => this.onDeviceDiscovered(device), 
@@ -246,19 +262,32 @@ export class SimpleMapPage {
     console.log('Discovered ' + JSON.stringify(device, null, 2));
     this.ngZone.run(() => {
 
-      if (device.rssi < this.far_threshold) {
-        this.count = this.count + 1;
-        this.vibration.vibrate(500);
-        if (this.devices.length > 2)
-          this.devices.shift();
-        this.devices.push(device);
-        unusualEvent = "Patient Faraway";
+      if (device.id in DEFAULT_TRANSMITTERS){
+        if (device.rssi < this.far_threshold) {
+          this.count = this.count + 1;
+          this.vibration.vibrate(500);
+          if (this.devices.length >= this.display_items)
+            this.devices.shift();
+          this.devices.push(DEFAULT_TRANSMITTERS[device.id].id + " Far away");
+          unusualEvent = "Object Faraway";
+        }
+        else if (device.rssi < this.mid_threshold) {
+          if (this.devices.length >= this.display_items)
+            this.devices.shift();
+          this.devices.push(DEFAULT_TRANSMITTERS[device.id].id + " in Middle");
+          unusualEvent = "";
+        } else {
+          if (this.devices.length >= this.display_items)
+            this.devices.shift();
+          this.devices.push(DEFAULT_TRANSMITTERS[device.id].id + " Near");
+          unusualEvent = "";
+        }
       }
       else
         return;
 
-      if (unusualEvent == "Patient Faraway") {      
-        this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + device.id + " Far away"}}, 
+      if (unusualEvent == "Object Faraway") {      
+        this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + DEFAULT_TRANSMITTERS[device.id].id + " Far away"}}, 
         function() {
           console.log('set config success');
         },
