@@ -46,7 +46,9 @@ var DEFAULT_TRANSMITTERS = {
   'cf389feb5b65': {id:'beacon5'},
   'fa1926067aae': {id:'beacon6'},
   'E8:3F:0B:A3:F6:12': {id:'b13-client'},
+  '5CD28DF8-8459-22E2-1D91-9D2F7B839E4F': {id:'b13-client'},
   'D2:3D:87:43:75:1F': {id:'b14-purse'},
+  'ED912309-81E7-5F8C-D572-6FA71324F126': {id:'b14-purse'},
 //  'b827ebf7fe86': {id:'mobile1t'}
   'b827eb6b0298': {id:'mobile1t'}
 };
@@ -142,7 +144,7 @@ export class SimpleMapPage {
     this.far_threshold = -80;
     this.mid_threshold = -70;
     this.near_threshold = -60;
-    this.display_items = 2;
+    this.display_items = 4;
     refreshIntervalId = setInterval(this.scan.bind(this), this.scan_period);
     unusualEvent = '';
   }
@@ -283,8 +285,13 @@ export class SimpleMapPage {
           unusualEvent = "";
         }
       }
-      else
+      else {
+//        if (this.devices.length >= this.display_items)
+//        this.devices.shift();
+//        this.devices.push(device.id + " ????");     
         return;
+      }
+
 
       if (unusualEvent == "Object Faraway") {      
         this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + DEFAULT_TRANSMITTERS[device.id].id + " Far away"}}, 
