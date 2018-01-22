@@ -45,13 +45,17 @@ var DEFAULT_TRANSMITTERS = {
   'c935df1aa8bd': {id:'beacon4'},
   'cf389feb5b65': {id:'beacon5'},
   'fa1926067aae': {id:'beacon6'},
-  'E8:3F:0B:A3:F6:12': {id:'b13-client'},
-  '5CD28DF8-8459-22E2-1D91-9D2F7B839E4F': {id:'b13-client'},
-  'D2:3D:87:43:75:1F': {id:'b14-purse'},
-  'ED912309-81E7-5F8C-D572-6FA71324F126': {id:'b14-purse'},
+// for android
+  'E8:3F:0B:A3:F6:12': {id:'b13-client', index:0 },
+  'D2:3D:87:43:75:1F': {id:'b14-purse', index:1 },
+// for iphone
+  '5CD28DF8-8459-22E2-1D91-9D2F7B839E4F': {id:'b13-client', index:0 },
+  'ED912309-81E7-5F8C-D572-6FA71324F126': {id:'b14-purse', index:1 },
 //  'b827ebf7fe86': {id:'mobile1t'}
   'b827eb6b0298': {id:'mobile1t'}
 };
+
+var beacon = [[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]];
 
 @IonicPage()
 @Component({
@@ -91,7 +95,9 @@ export class SimpleMapPage {
   polyline: any;  
 
   // BLE
-  devices: any[] = [];
+  devices: any[] = [{'id':"",'status':""},{'id':"",'status':""},
+                    {'id':"",'status':""},{'id':"",'status':""}
+                  ];
   statusMessage: string;
   count: number;
   scan_period: number;
@@ -239,135 +245,6 @@ export class SimpleMapPage {
         console.log('- Configure success: ', state);        
       });      
     });
-  }
-
-// BLE events 
-  scan() {
-//      this.devices = [];  // clear list
-    this.setStatus('*************** Proximity Supervision');
-/*
-    this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
-      device => this.onDeviceDiscovered(device), 
-      error => this.scanError(error)
-    );
-*/
-    this.ble.scan([],3).subscribe(
-      device => this.onDeviceDiscovered(device), 
-      error => this.scanError(error)
-    );
-//    setTimeout(this.setStatus.bind(this), 5000, 'Scan complete');
-//    setTimeout(this.ble.stopScan, 3000);
-  }
-
-  onDeviceDiscovered(device) {
-
-    console.log('Discovered ' + JSON.stringify(device, null, 2));
-    this.ngZone.run(() => {
-
-      if (device.id in DEFAULT_TRANSMITTERS){
-        if (device.rssi < this.far_threshold) {
-          this.count = this.count + 1;
-          this.vibration.vibrate(500);
-          if (this.devices.length >= this.display_items)
-            this.devices.shift();
-          this.devices.push(DEFAULT_TRANSMITTERS[device.id].id + " Far away");
-          unusualEvent = "Object Faraway";
-        }
-        else if (device.rssi < this.mid_threshold) {
-          if (this.devices.length >= this.display_items)
-            this.devices.shift();
-          this.devices.push(DEFAULT_TRANSMITTERS[device.id].id + " in Middle");
-          unusualEvent = "";
-        } else {
-          if (this.devices.length >= this.display_items)
-            this.devices.shift();
-          this.devices.push(DEFAULT_TRANSMITTERS[device.id].id + " Near");
-          unusualEvent = "";
-        }
-      }
-      else {
-//        if (this.devices.length >= this.display_items)
-//        this.devices.shift();
-//        this.devices.push(device.id + " ????");     
-        return;
-      }
-
-
-      if (unusualEvent == "Object Faraway") {      
-        this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + DEFAULT_TRANSMITTERS[device.id].id + " Far away"}}, 
-        function() {
-          console.log('set config success');
-        },
-        function() {
-          console.log('failed to setConfig');
-        });
-        this.bgGeo.getCurrentPosition((location) => {
-          console.log('- getCurrentPosition success: ', location);
-            unusualEvent = "";          
-            this.bgGeo.setConfig({extras: {"Unusualevent":unusualEvent}}, 
-              function() {
-                console.log('set config success');
-              },
-              function() {
-                console.log('failed to setConfig');
-              });
-        });
-      }
-
-    });
-  }
-
-  // If location permission is denied, you'll end up here
-  scanError(error) {
-    this.setStatus('Error ' + error);
-    let toast = this.toastCtrl.create({
-      message: 'Error scanning for Bluetooth low energy devices',
-      position: 'middle',
-      duration: 5000
-    });
-    toast.present();
-  }
-
-  setStatus(message) {
-    console.log(message);
-    this.ngZone.run(() => {
-      this.statusMessage = message;
-    });
-  }
-
-  // Speech Recognition
-  isIos() {
-    return this.plt.is('ios');
-  }
-
-  stopListening() {
-    this.speechRecognition.stopListening().then(() => {
-      this.isRecording = false;
-    });
-  }
- 
-  getPermission() {
-    this.speechRecognition.hasPermission()
-      .then((hasPermission: boolean) => {
-        if (!hasPermission) {
-          this.speechRecognition.requestPermission();
-        }
-      });
-  }
-
-  startListening() {
-    let options = {
-      language: 'en-US',
-      matches: 1,
-      showPopup: false,
-      prompt: '',
-      showPartial: true
-    }
-    this.speechRecognition.startListening(options).subscribe(matches => {
-      this.matches = matches;
-      this.cd.detectChanges();
-    });
-    this.isRecording = true;
   }
 
   /**
@@ -835,4 +712,128 @@ export class SimpleMapPage {
     }
     this.bgGeo.playSound(soundId);
   }
+
+
+// BLE events 
+  scan() {
+  //      this.devices = [];  // clear list
+      this.setStatus('*************** Proximity Supervision');
+  /*
+      this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
+        device => this.onDeviceDiscovered(device), 
+        error => this.scanError(error)
+      );
+  */
+      this.ble.scan([],3).subscribe(
+        device => this.onDeviceDiscovered(device), 
+        error => this.scanError(error)
+      );
+  //    setTimeout(this.setStatus.bind(this), 5000, 'Scan complete');
+  //    setTimeout(this.ble.stopScan, 3000);
+    }
+  
+  onDeviceDiscovered(device) {
+  
+      console.log('Discovered ' + JSON.stringify(device, null, 2));
+      this.ngZone.run(() => {
+  
+        if (device.id in DEFAULT_TRANSMITTERS){
+          beacon[DEFAULT_TRANSMITTERS[device.id].index][0] = device.rssi;
+          this.devices[DEFAULT_TRANSMITTERS[device.id].index].id = DEFAULT_TRANSMITTERS[device.id].id;
+          if (device.rssi < this.far_threshold) {
+            this.count = this.count + 1;
+            this.vibration.vibrate(500);
+            this.devices[DEFAULT_TRANSMITTERS[device.id].index].status = 'Far away';      
+            unusualEvent = "Object Faraway";
+          }
+          else if (device.rssi < this.mid_threshold) {
+            this.devices[DEFAULT_TRANSMITTERS[device.id].index].status = 'Middle';      
+            unusualEvent = "";
+          } else {
+            this.devices[DEFAULT_TRANSMITTERS[device.id].index].status = 'Near';      
+            unusualEvent = "";
+          }
+        }
+        else {
+          return;
+        }
+  
+  
+        if (unusualEvent == "Object Faraway") {      
+          this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + DEFAULT_TRANSMITTERS[device.id].id + " Far away"}}, 
+          function() {
+            console.log('set config success');
+          },
+          function() {
+            console.log('failed to setConfig');
+          });
+          this.bgGeo.getCurrentPosition((location) => {
+            console.log('- getCurrentPosition success: ', location);
+              unusualEvent = "";          
+              this.bgGeo.setConfig({extras: {"Unusualevent":unusualEvent}}, 
+                function() {
+                  console.log('set config success');
+                },
+                function() {
+                  console.log('failed to setConfig');
+                });
+          });
+        }
+  
+      });
+    }
+  
+    // If location permission is denied, you'll end up here
+    scanError(error) {
+      this.setStatus('Error ' + error);
+      let toast = this.toastCtrl.create({
+        message: 'Error scanning for Bluetooth low energy devices',
+        position: 'middle',
+        duration: 5000
+      });
+      toast.present();
+    }
+  
+    setStatus(message) {
+      console.log(message);
+      this.ngZone.run(() => {
+        this.statusMessage = message;
+      });
+    }
+  
+    // Speech Recognition
+    isIos() {
+      return this.plt.is('ios');
+    }
+  
+    stopListening() {
+      this.speechRecognition.stopListening().then(() => {
+        this.isRecording = false;
+      });
+    }
+   
+    getPermission() {
+      this.speechRecognition.hasPermission()
+        .then((hasPermission: boolean) => {
+          if (!hasPermission) {
+            this.speechRecognition.requestPermission();
+          }
+        });
+    }
+  
+    startListening() {
+      let options = {
+        language: 'en-US',
+        matches: 1,
+        showPopup: false,
+        prompt: '',
+        showPartial: true
+      }
+      this.speechRecognition.startListening(options).subscribe(matches => {
+        this.matches = matches;
+        this.cd.detectChanges();
+      });
+      this.isRecording = true;
+    }
+
 }
