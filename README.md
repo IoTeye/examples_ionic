@@ -33,7 +33,7 @@ The demo is composed of four separate and indpendant sub-applications implemente
 - [Events](./src/pages/hello-world/hello-world.ts)
 - [Proximity](./src/pages/proximity/proximity.ts)
 - [Woods Trial](./src/pages/simple-map/simple-map.ts)
-- [Advanced](./src/pages/advanced) with complex settings screen and geofencing.
+- [InApp](./src/pages/inapp) with complex settings screen and geofencing.
 
 ## :large_blue_diamond: Tracking Server
 

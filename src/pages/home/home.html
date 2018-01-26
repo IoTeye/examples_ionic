@@ -1,6 +1,5 @@
 <!--
   Generated template for the HomePage page.
-
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
 -->
@@ -16,22 +15,22 @@
   <ion-grid>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('SimpleMapPage')" color="gold">Field Trial</button>
+        <button ion-button full round (click)="onNavigation('SimpleMapPage')" color="gold">Proximity</button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('HelloWorldPage')" color="gold">Unusual Events</button>
+        <button ion-button full round (click)="onNavigation('HelloWorldPage')" color="gold">Staff Activity</button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('ProximityPage')" color="gold">Proximity</button>
+        <button ion-button full round (click)="onNavigation('ProximityPage')" color="gold">Client Info</button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('AdvancedPage')" color="gold">Map</button>
+        <button ion-button full round (click)="onNavigation('InAppPage')" color="gold">Indoors Info</button>
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -40,8 +39,7 @@
 <ion-footer>
   <ion-navbar color="light">
     <p style="padding:5px">
-      These apps will post locations to IoT Eye cloud server.  You can view your tracking in the browser by visiting:</p>
-    <p style="text-align:center"><i>18.218.71.70:9000/<strong [innerHTML]="trackerUsername"></strong></i></p>
+      These apps will post locations to IoT Eye cloud server. </p>
     <ion-item>
       <ion-label color="primary">Username:</ion-label>
       <ion-input [(ngModel)]="trackerUsername" readonly="true"></ion-input>

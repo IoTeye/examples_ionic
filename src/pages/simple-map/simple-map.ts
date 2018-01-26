@@ -55,7 +55,17 @@ var DEFAULT_TRANSMITTERS = {
   'b827eb6b0298': {id:'mobile1t'}
 };
 
-var beacon = [[0],[0],[0],[0],[0],[0],[0],[0],[0],[0]];
+var beacon = [{far:0,mid:0,near:0},
+              {far:0,mid:0,near:0},
+              {far:0,mid:0,near:0},
+              {far:0,mid:0,near:0},
+              {far:0,mid:0,near:0},
+              {far:0,mid:0,near:0},
+              {far:0,mid:0,near:0},
+              {far:0,mid:0,near:0},
+              {far:0,mid:0,near:0},
+              {far:0,mid:0,near:0}
+            ];
 
 @IonicPage()
 @Component({
@@ -151,7 +161,7 @@ export class SimpleMapPage {
     this.mid_threshold = -70;
     this.near_threshold = -60;
     this.display_items = 4;
-    refreshIntervalId = setInterval(this.scan.bind(this), this.scan_period);
+    refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
     unusualEvent = '';
   }
 
@@ -427,7 +437,7 @@ export class SimpleMapPage {
       // Set BLE
       clearInterval(refreshIntervalId);
       this.scan_period = parseInt(this[name], 10);
-      refreshIntervalId = setInterval(this.scan.bind(this), this.scan_period);
+      refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
       return;
     }
     if (name == 'far_threshold') {
@@ -718,47 +728,64 @@ export class SimpleMapPage {
   scan() {
   //      this.devices = [];  // clear list
       this.setStatus('*************** Proximity Supervision');
-  /*
-      this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
-        device => this.onDeviceDiscovered(device), 
-        error => this.scanError(error)
-      );
-  */
       this.ble.scan([],3).subscribe(
         device => this.onDeviceDiscovered(device), 
         error => this.scanError(error)
       );
-  //    setTimeout(this.setStatus.bind(this), 5000, 'Scan complete');
-  //    setTimeout(this.ble.stopScan, 3000);
     }
   
+  scan2() {  
+        this.setStatus('*************** Proximity Supervision');
+        this.ble.stopScan();
+        this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
+          device => this.onDeviceDiscovered(device), 
+          error => this.scanError(error)
+        );
+      }
+
   onDeviceDiscovered(device) {
   
       console.log('Discovered ' + JSON.stringify(device, null, 2));
       this.ngZone.run(() => {
-  
         if (device.id in DEFAULT_TRANSMITTERS){
-          beacon[DEFAULT_TRANSMITTERS[device.id].index][0] = device.rssi;
-          this.devices[DEFAULT_TRANSMITTERS[device.id].index].id = DEFAULT_TRANSMITTERS[device.id].id;
+          var index = DEFAULT_TRANSMITTERS[device.id].index;
+ //         beacon[DEFAULT_TRANSMITTERS[device.id].index][0] = device.rssi;
+          this.devices[index].id = DEFAULT_TRANSMITTERS[device.id].id;
           if (device.rssi < this.far_threshold) {
-            this.count = this.count + 1;
-            this.vibration.vibrate(500);
-            this.devices[DEFAULT_TRANSMITTERS[device.id].index].status = 'Far away';      
-            unusualEvent = "Object Faraway";
+            beacon[index].far += 1;
           }
           else if (device.rssi < this.mid_threshold) {
-            this.devices[DEFAULT_TRANSMITTERS[device.id].index].status = 'Middle';      
-            unusualEvent = "";
+            beacon[index].mid += 1;
           } else {
-            this.devices[DEFAULT_TRANSMITTERS[device.id].index].status = 'Near';      
+            beacon[index].near += 1;
+          }
+          if (beacon[index].near > 2) {
+            this.devices[index].status = 'Near';      
             unusualEvent = "";
+            beacon[index].near = 0;
+            beacon[index].mid = 0;
+            beacon[index].far = 0;
+          }
+          if (beacon[index].mid > 2) {
+            this.devices[index].status = 'Middle';      
+            unusualEvent = "";
+            beacon[index].near = 0;
+            beacon[index].mid = 0;
+            beacon[index].far = 0;
+          }
+          if (beacon[index].far > 2) {    
+            this.vibration.vibrate(500);
+            this.devices[index].status = 'Far away';      
+            unusualEvent = "Object Faraway";
+            beacon[index].near = 0;
+            beacon[index].mid = 0;
+            beacon[index].far = 0;
           }
         }
         else {
           return;
         }
-  
-  
+    
         if (unusualEvent == "Object Faraway") {      
           this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + DEFAULT_TRANSMITTERS[device.id].id + " Far away"}}, 
           function() {

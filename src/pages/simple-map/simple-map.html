@@ -36,12 +36,11 @@
 	</ion-fab>
 
 	<ion-list>
-			<ion-item>
-				<h3>{{ statusMessage }}</h3>
-			</ion-item>
-			<ion-item *ngFor="let device of devices">
-					<h4>{{ device.id }} - {{ device.status }} </h4>
-			</ion-item>  
+		<ion-list-header> Client Proximity </ion-list-header>
+		<ion-item *ngFor="let device of devices">
+			<ion-label>{{ device.id }}</ion-label> 
+			<ion-label>{{ device.status }}</ion-label>
+		</ion-item>
 	</ion-list>
 	<!-->
 	<button ion-button full (click)="startListening()">Start Listening</button>

@@ -7,6 +7,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { BLE } from '@ionic-native/ble';
 import { Vibration } from '@ionic-native/vibration';
 import { SpeechRecognition } from '@ionic-native/speech-recognition';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 import { Device } from '@ionic-native/device';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -34,6 +35,7 @@ import { MyApp } from './app.component';
     BLE,
     Vibration,
     SpeechRecognition,
+    InAppBrowser,
   ]
 })
 export class AppModule {}
