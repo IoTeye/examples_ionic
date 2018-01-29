@@ -8,6 +8,8 @@ import { BLE } from '@ionic-native/ble';
 import { Vibration } from '@ionic-native/vibration';
 import { SpeechRecognition } from '@ionic-native/speech-recognition';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { SQLite } from '@ionic-native/sqlite';
+import { Toast } from '@ionic-native/toast';
 
 import { Device } from '@ionic-native/device';
 import { Dialogs } from '@ionic-native/dialogs';
@@ -36,6 +38,8 @@ import { MyApp } from './app.component';
     Vibration,
     SpeechRecognition,
     InAppBrowser,
+    SQLite,
+    Toast
   ]
 })
 export class AppModule {}

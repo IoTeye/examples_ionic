@@ -7,6 +7,7 @@ import {
 } from 'ionic-angular';
 
 import { Dialogs } from '@ionic-native/dialogs';
+import { InAppBrowser } from '@ionic-native/in-app-browser';
 
 const TRACKER_HOST = 'http://18.218.71.70:9000/';
 //const TRACKER_HOST = 'http://192.168.1.9:9000/';
@@ -31,14 +32,19 @@ export class HomePage {
   trackerUsername: string;
   url: string;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private platform: Platform, private dialogs: Dialogs) {    
+  constructor(public navCtrl: NavController, 
+    public navParams: NavParams,
+    private platform: Platform,
+    private dialogs: Dialogs,
+    private inappbrowser: InAppBrowser) {    
     this.platform.ready().then(this.onDeviceReady.bind(this));
+  
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad HomePage');
     let localStorage = (<any>window).localStorage;    
-    localStorage.removeItem('page');    
+    localStorage.removeItem('page');
   }
 
   onDeviceReady() {
@@ -110,5 +116,10 @@ export class HomePage {
       this.trackerUsername = username;
       this.url = TRACKER_HOST + username;
       this.bgGeo.setConfig({url: TRACKER_HOST + 'locations/' + username});
+  }
+
+  openUrl() {
+    let browser = this.inappbrowser.create(TRACKER_HOST+this.trackerUsername,"_blank");
+    browser.show();
   }
 }

@@ -16,10 +16,10 @@ export class InAppPage {
     private inappbrowser: InAppBrowser
   )
      {
-      this.openUrl();
+//      this.openUrl();
   }
   openUrl() {
-          let browser = this.inappbrowser.create('https://ionicframework.com/');
+          let browser = this.inappbrowser.create('https://ionicframework.com/',"_blank");
           browser.show();
   }
 
