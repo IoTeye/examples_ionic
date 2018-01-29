@@ -15,22 +15,22 @@
   <ion-grid>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('SimpleMapPage')" color="gold">Proximity</button>
+        <button ion-button full round (click)="onNavigation('SQLitePage')" color="gold">Staff Tasks List</button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('SQLitePage')" color="gold">Staff Tasks</button>
+        <button ion-button full round (click)="onNavigation('SimpleMapPage')" color="gold">Proximity Monitor</button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="openUrl()" color="gold">Staff Activities</button>
+        <button ion-button full round (click)="openUrl()" color="gold">Staff Activities Log</button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('ProximityPage')" color="gold">Client Info</button>
+        <button ion-button full round (click)="onNavigation('ProximityPage')" color="gold">Scan Client Info</button>
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -39,7 +39,7 @@
 <ion-footer>
   <ion-navbar color="light">
     <p style="padding:5px">
-      These apps will post staff and client activities to IoT Eye cloud server. </p>
+      These apps will log staff and client activities to IoT Eye cloud server. </p>
     <ion-item>
       <ion-label color="primary">Staff Username:</ion-label>
       <ion-input [(ngModel)]="trackerUsername" readonly="true"></ion-input>

@@ -29,6 +29,7 @@ export class ProximityPage {
 
   // Return to Home screen (app switcher)
   onClickHome() {
+    this.ble.stopScan();
     this.navCtrl.setRoot('HomePage');
   }
 
@@ -38,7 +39,7 @@ export class ProximityPage {
   }
 
   scan() {
-    this.setStatus('Scanning for Bluetooth LE Devices');
+    this.setStatus('Scanning for Client Info');
     this.devices = [];  // clear list
 
     this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
