@@ -10,7 +10,7 @@ import { Toast } from '@ionic-native/toast';
 })
 export class EditDataPage {
 
-  data = { rowid:0, date:"", type:"", description:"", amount:0 };
+  data = { rowid:0, date:"", type:"", description:"", duration:0 };
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
@@ -28,14 +28,14 @@ export class EditDataPage {
       name: 'ionicdb.db',
       location: 'default'
     }).then((db: SQLiteObject) => {
-      db.executeSql('SELECT * FROM expense WHERE rowid=?', [rowid])
+      db.executeSql('SELECT * FROM task WHERE rowid=?', [rowid])
         .then(res => {
           if(res.rows.length > 0) {
             this.data.rowid = res.rows.item(0).rowid;
             this.data.date = res.rows.item(0).date;
             this.data.type = res.rows.item(0).type;
             this.data.description = res.rows.item(0).description;
-            this.data.amount = res.rows.item(0).amount;
+            this.data.duration = res.rows.item(0).duration;
           }
         })
         .catch(e => {
@@ -61,7 +61,7 @@ export class EditDataPage {
       name: 'ionicdb.db',
       location: 'default'
     }).then((db: SQLiteObject) => {
-      db.executeSql('UPDATE expense SET date=?,type=?,description=?,amount=? WHERE rowid=?',[this.data.date,this.data.type,this.data.description,this.data.amount,this.data.rowid])
+      db.executeSql('UPDATE task SET date=?,type=?,description=?,duration=? WHERE rowid=?',[this.data.date,this.data.type,this.data.description,this.data.duration,this.data.rowid])
         .then(res => {
           console.log(res);
           this.toast.show('Data updated', '5000', 'center').subscribe(

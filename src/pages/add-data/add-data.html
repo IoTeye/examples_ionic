@@ -7,17 +7,13 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>My Expense</ion-title>
-    <ion-buttons start>
-      <button ion-button (click)="onClickHome()" color="primary">Home</button>
-    </ion-buttons>
+    <ion-title>Add Data to My Task List</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <h2>Add Data</h2>
   <form (ngSubmit)="saveData()">
     <ion-item>
       <ion-label>Date</ion-label>
@@ -26,8 +22,8 @@
     <ion-item>
       <ion-label>Type</ion-label>
       <ion-select [(ngModel)]="data.type" name="type" required="">
-        <ion-option value="Income">Income</ion-option>
-        <ion-option value="Expense">Expense</ion-option>
+        <ion-option value="Classroom">Class Room</ion-option>
+        <ion-option value="Bus">Bus</ion-option>
       </ion-select>
     </ion-item>
     <ion-item>
@@ -35,12 +31,12 @@
       <ion-input type="text" placeholder="Description" [(ngModel)]="data.description" name="description" required="" ></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label>Amount</ion-label>
-      <ion-input type="number" placeholder="Amount" [(ngModel)]="data.amount" name="amount" required="" ></ion-input>
+      <ion-label>Duration</ion-label>
+      <ion-input type="number" placeholder="Duration" [(ngModel)]="data.duration" name="duration" required="" ></ion-input>
     </ion-item>
     <button ion-button type="submit" block>Save Data</button>
   </form>
-  <ion-buttons>
+  <ion-buttons end>
     <button ion-button (click)="onClickHome()" color="primary">Done</button>
   </ion-buttons>
 </ion-content>

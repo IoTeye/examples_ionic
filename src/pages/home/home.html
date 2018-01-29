@@ -6,7 +6,7 @@
 
 <ion-header>
   <ion-navbar color="gold">
-    <ion-title mode="ios">Mobile Agent</ion-title>
+    <ion-title mode="ios">Woods Field Trial</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -20,17 +20,17 @@
     </ion-row>
     <ion-row>
       <ion-col>
-        <button ion-button full round (click)="onNavigation('SQLitePage')" color="gold">Staff Activity</button>
+        <button ion-button full round (click)="onNavigation('SQLitePage')" color="gold">Staff Tasks</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <button ion-button full round (click)="openUrl()" color="gold">Staff Activities</button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
         <button ion-button full round (click)="onNavigation('ProximityPage')" color="gold">Client Info</button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <ion-col>
-        <button ion-button full round (click)="openUrl()" color="gold">Staff Log</button>
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -39,18 +39,18 @@
 <ion-footer>
   <ion-navbar color="light">
     <p style="padding:5px">
-      These apps will post locations to IoT Eye cloud server. </p>
+      These apps will post staff and client activities to IoT Eye cloud server. </p>
     <ion-item>
-      <ion-label color="primary">Username:</ion-label>
+      <ion-label color="primary">Staff Username:</ion-label>
       <ion-input [(ngModel)]="trackerUsername" readonly="true"></ion-input>
     </ion-item>
 
     <ion-row>
       <ion-col align-self-start style="padding-right:5px;">
-        <button ion-button small full round color="danger" (click)="onClickEditUsername()">Edit Username</button>
+        <button ion-button small full round color="danger" (click)="onClickEditUsername()">Edit Staff Username</button>
       </ion-col>
       <ion-col align-self-end style="padding-right:5px;">
-        <a [href]="url" style="text-decoration:none"><button ion-button round small full color="primary">View Server</button></a>
+        <a [href]="url" style="text-decoration:none"><button ion-button round small full color="primary">View Server Log</button></a>
       </ion-col>
     </ion-row>
   </ion-navbar>

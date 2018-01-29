@@ -9,8 +9,8 @@ import {
 import { Dialogs } from '@ionic-native/dialogs';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
 
-const TRACKER_HOST = 'http://18.218.71.70:9000/';
-//const TRACKER_HOST = 'http://192.168.1.9:9000/';
+const TRACKER_HOST = 'http://18.219.25.48:9000/';
+//const TRACKER_HOST = 'http://localhost:9000/';
 
 // Default tracking server username if use doesn't provide one.
 const DEFAULT_USERNAME = "woods";

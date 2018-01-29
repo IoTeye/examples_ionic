@@ -39,12 +39,14 @@ var unusualEvent;
 
 //  DEFAULT_TRANSMITTERS = new Set(['ec149b8cc77d','fed90f07c33d','fda6a51c4598']);
 var DEFAULT_TRANSMITTERS = {
+/*
   'fed90f07c33d': {id:'beacon1'},
   'fda6a51c4598': {id:'beacon2'},
   'ec149b8cc77d': {id:'beacon3'},
   'c935df1aa8bd': {id:'beacon4'},
   'cf389feb5b65': {id:'beacon5'},
   'fa1926067aae': {id:'beacon6'},
+*/
 // for android
   'E8:3F:0B:A3:F6:12': {id:'b13-client', index:0 },
   'D2:3D:87:43:75:1F': {id:'b14-purse', index:1 },
@@ -52,7 +54,7 @@ var DEFAULT_TRANSMITTERS = {
   '5CD28DF8-8459-22E2-1D91-9D2F7B839E4F': {id:'b13-client', index:0 },
   'ED912309-81E7-5F8C-D572-6FA71324F126': {id:'b14-purse', index:1 },
 //  'b827ebf7fe86': {id:'mobile1t'}
-  'b827eb6b0298': {id:'mobile1t'}
+//  'b827eb6b0298': {id:'mobile1t'}
 };
 
 var beacon = [{far:0,mid:0,near:0},

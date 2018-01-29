@@ -11,10 +11,7 @@ import { EditDataPage } from '../edit-data/edit-data';
 })
 export class SQLitePage {
 
-  expenses: any = [];
-  totalIncome = 0;
-  totalExpense = 0;
-  balance = 0;
+  tasks: any = [];
 
   constructor(public navCtrl: NavController,
     private sqlite: SQLite) {}
@@ -36,17 +33,18 @@ export class SQLitePage {
       name: 'ionicdb.db',
       location: 'default'
     }).then((db: SQLiteObject) => {
-      db.executeSql('CREATE TABLE IF NOT EXISTS expense(rowid INTEGER PRIMARY KEY, date TEXT, type TEXT, description TEXT, amount INT)', {})
+      db.executeSql('CREATE TABLE IF NOT EXISTS task(rowid INTEGER PRIMARY KEY, date TEXT, type TEXT, description TEXT, duration INT)', {})
       .then(res => console.log('Executed SQL'))
       .catch(e => console.log(e));
-      db.executeSql('SELECT * FROM expense ORDER BY rowid DESC', {})
+      db.executeSql('SELECT * FROM task ORDER BY rowid DESC', {})
       .then(res => {
-        this.expenses = [];
+        this.tasks = [];
         for(var i=0; i<res.rows.length; i++) {
-          this.expenses.push({rowid:res.rows.item(i).rowid,date:res.rows.item(i).date,type:res.rows.item(i).type,description:res.rows.item(i).description,amount:res.rows.item(i).amount})
+          this.tasks.push({rowid:res.rows.item(i).rowid,date:res.rows.item(i).date,type:res.rows.item(i).type,description:res.rows.item(i).description,duration:res.rows.item(i).duration})
         }
       })
       .catch(e => console.log(e));
+/*
       db.executeSql('SELECT SUM(amount) AS totalIncome FROM expense WHERE type="Income"', {})
       .then(res => {
         if(res.rows.length>0) {
@@ -62,6 +60,7 @@ export class SQLitePage {
           this.balance = this.totalIncome-this.totalExpense;
         }
       })
+      */
     }).catch(e => console.log(e));
   }
 
@@ -83,7 +82,7 @@ export class SQLitePage {
       name: 'ionicdb.db',
       location: 'default'
     }).then((db: SQLiteObject) => {
-      db.executeSql('DELETE FROM expense WHERE rowid=?', [rowid])
+      db.executeSql('DELETE FROM task WHERE rowid=?', [rowid])
       .then(res => {
         console.log(res);
         this.getData();
