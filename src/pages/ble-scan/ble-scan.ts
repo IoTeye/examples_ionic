@@ -5,10 +5,10 @@ import { BLE } from '@ionic-native/ble';
 
 @IonicPage()
 @Component({
-  selector: 'page-proximity',
-  templateUrl: 'proximity.html'
+  selector: 'page-ble-scan',
+  templateUrl: 'ble-scan.html'
 })
-export class ProximityPage {
+export class BLEscanPage {
  /**
   * @property {Object} state
   */

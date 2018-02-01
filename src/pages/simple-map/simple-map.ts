@@ -31,7 +31,7 @@ import SOUND_MAP from '../../lib/sound-map';
 declare var google;
 
 // Transistor Software Tracking Server Host
-const TRACKER_HOST = 'http://18.218.71.70:9000/locations/';
+const TRACKER_HOST = 'http://tracker.ioteyeinc.com:9000/locations/';
 //const TRACKER_HOST = 'http://192.168.1.9:9000/locations/';
 
 var refreshIntervalId;

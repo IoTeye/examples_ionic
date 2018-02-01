@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { IonicPageModule } from 'ionic-angular';
-import { ProximityPage } from './proximity';
+import { BLEscanPage } from './ble-scan';
 
 @NgModule({
   declarations: [
-    ProximityPage,
+    BLEscanPage,
   ],
   imports: [
-    IonicPageModule.forChild(ProximityPage),
+    IonicPageModule.forChild(BLEscanPage),
   ],
 })
-export class ProximityPageModule {}
+export class BLEscanPageModule {}
