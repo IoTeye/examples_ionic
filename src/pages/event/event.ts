@@ -7,10 +7,10 @@ const TRACKER_HOST = 'http://tracker.transistorsoft.com/locations/';
 
 @IonicPage()
 @Component({
-  selector: 'page-hello-world',
-  templateUrl: 'hello-world.html',
+  selector: 'page-event',
+  templateUrl: 'event.html',
 })
-export class HelloWorldPage {
+export class EventPage {
   // BackgroundGeolocation instance
   bgGeo: any;
 

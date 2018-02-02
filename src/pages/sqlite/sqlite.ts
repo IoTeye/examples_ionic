@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController } from 'ionic-angular';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
-import { AddDataPage } from '../add-data/add-data';
-import { EditDataPage } from '../edit-data/edit-data';
+import { AddDataPage } from './add-data/add-data';
+import { EditDataPage } from './edit-data/edit-data';
 
 @IonicPage()
 @Component({
