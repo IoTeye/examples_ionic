@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.ioteyeinc.smartagent" version="0.1.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.ioteyeinc.smartagent" version="0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Mobile Agent</name>
-    <description>Cordova Background Geolocation Demo App.</description>
+    <description>IoT Eye Demo App.</description>
     <author email="mingjye.sheng@gmail.com" href="https://www.ioteyeinc.com/">IoT Eye Inc</author>
     <content src="index.html" />
     <access origin="*" />

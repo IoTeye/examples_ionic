@@ -6,6 +6,9 @@
     <ion-buttons start>
       <button ion-button (click)="onClickHome()" color="primary">Home</button>
     </ion-buttons>
+    <ion-buttons end>
+    	<ion-toggle [(ngModel)]="enabled" (ionChange)="onToggleEnabled()" style="display:block;"></ion-toggle>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -14,7 +17,7 @@
     <button ion-item *ngFor="let device of devices">
       <h2>{{ device.name || 'Unnamed' }} - </h2>
       <p>{{ device.id }} - </p>
-      <p>Severity Level: {{ device.rssi }}</p>
+      <p>RSSI Level: {{ device.rssi }}</p>
     </button>  
    </ion-list> 
 </ion-content>

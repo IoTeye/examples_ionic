@@ -25,12 +25,12 @@
 					<ion-input [(ngModel)]="far_threshold" (blur)="onSetConfig('far_threshold')" type="number"></ion-input>
 			</ion-item>
 			<ion-item>
-					<ion-label>MidThreshold</ion-label>
-					<ion-input [(ngModel)]="mid_threshold" (blur)="onSetConfig('mid_threshold')" type="number"></ion-input>
-			</ion-item>
-			<ion-item>
 					<ion-label>NearThreshold</ion-label>
 					<ion-input [(ngModel)]="near_threshold" (blur)="onSetConfig('near_threshold')" type="number"></ion-input>
+			</ion-item>
+			<ion-item>
+					<ion-label>ImmediateThreshold</ion-label>
+					<ion-input [(ngModel)]="immediate_threshold" (blur)="onSetConfig('immediate_threshold')" type="number"></ion-input>
 			</ion-item>
      	</ion-fab-list>
 	</ion-fab>

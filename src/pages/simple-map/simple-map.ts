@@ -26,6 +26,7 @@ import { SpeechRecognition } from '@ionic-native/speech-recognition';
 // Handy color & sound constants.
 import COLORS from '../../lib/colors';
 import SOUND_MAP from '../../lib/sound-map';
+import { anchorDef } from '@angular/core/src/view/element';
 
 // Google maps <script> is loaded in main index.html
 declare var google;
@@ -57,16 +58,16 @@ var DEFAULT_TRANSMITTERS = {
 //  'b827eb6b0298': {id:'mobile1t'}
 };
 
-var beacon = [{far:0,mid:0,near:0},
-              {far:0,mid:0,near:0},
-              {far:0,mid:0,near:0},
-              {far:0,mid:0,near:0},
-              {far:0,mid:0,near:0},
-              {far:0,mid:0,near:0},
-              {far:0,mid:0,near:0},
-              {far:0,mid:0,near:0},
-              {far:0,mid:0,near:0},
-              {far:0,mid:0,near:0}
+var beacon = [{id:'b13-client1', far:0,near:0,immediate:0,invisible:0},
+              {id:'b14-client2', far:0,near:0,immediate:0,invisible:0},
+              {id:'b1-client3', far:0,near:0,immediate:0,invisible:0},
+              {id:'b2-client4', far:0,near:0,immediate:0,invisible:0},
+              {id:'b3-client5', far:0,near:0,immediate:0,invisible:0},
+              {id:'b4-client6', far:0,near:0,immediate:0,invisible:0},
+              {id:'b5-client7', far:0,near:0,immediate:0,invisible:0},
+              {id:'b6-client8', far:0,near:0,immediate:0,invisible:0},
+              {id:'b7-client9', far:0,near:0,immediate:0,invisible:0},
+              {id:'b8-client0', far:0,near:0,immediate:0,invisible:0}
             ];
 
 @IonicPage()
@@ -114,8 +115,8 @@ export class SimpleMapPage {
   count: number;
   scan_period: number;
   far_threshold: number;
-  mid_threshold: number;
   near_threshold: number;
+  immediate_threshold: number;
   display_items: number;
 
   // Speech Recognition
@@ -159,9 +160,9 @@ export class SimpleMapPage {
     this.menu2Active = false;
 
     this.scan_period = 5000;
-    this.far_threshold = -80;
-    this.mid_threshold = -70;
-    this.near_threshold = -60;
+    this.far_threshold = -100;
+    this.near_threshold = -85;
+    this.immediate_threshold = -65;
     this.display_items = 4;
     refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
     unusualEvent = '';
@@ -447,14 +448,14 @@ export class SimpleMapPage {
       this.far_threshold = parseInt(this[name], 10);
       return;
     }
-    if (name == 'mid_threshold') {
-      // Set BLE
-      this.mid_threshold = parseInt(this[name], 10);
-      return;
-    }
     if (name == 'near_threshold') {
       // Set BLE
       this.near_threshold = parseInt(this[name], 10);
+      return;
+    }
+    if (name == 'immediate_threshold') {
+      // Set BLE
+      this.immediate_threshold = parseInt(this[name], 10);
       return;
     }
     if (this.state[name] === this[name]) {
@@ -739,6 +740,17 @@ export class SimpleMapPage {
   scan2() {  
         this.setStatus('*************** Proximity Supervision');
         this.ble.stopScan();
+          var i;
+          for (i=0; i<2; i++) {
+            beacon[i].invisible +=1;
+            if (beacon[i].invisible > 2) {    
+  //            this.vibration.vibrate(500);
+              this.devices[i].status = 'Invisible';
+              this.devices[i].id = beacon[i].id;
+              unusualEvent = "Object Invisible";
+            }
+          }
+
         this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
           device => this.onDeviceDiscovered(device), 
           error => this.scanError(error)
@@ -747,41 +759,43 @@ export class SimpleMapPage {
 
   onDeviceDiscovered(device) {
   
-      console.log('Discovered ' + JSON.stringify(device, null, 2));
+//      console.log('Discovered ' + JSON.stringify(device, null, 2));
       this.ngZone.run(() => {
         if (device.id in DEFAULT_TRANSMITTERS){
           var index = DEFAULT_TRANSMITTERS[device.id].index;
  //         beacon[DEFAULT_TRANSMITTERS[device.id].index][0] = device.rssi;
           this.devices[index].id = DEFAULT_TRANSMITTERS[device.id].id;
-          if (device.rssi < this.far_threshold) {
+          beacon[index].invisible = 0;
+          if (device.rssi > this.immediate_threshold) {
+            beacon[index].immediate += 1;
+          }
+          else if (device.rssi > this.near_threshold) {
+            beacon[index].near += 1;
+          } 
+          else {
             beacon[index].far += 1;
           }
-          else if (device.rssi < this.mid_threshold) {
-            beacon[index].mid += 1;
-          } else {
-            beacon[index].near += 1;
-          }
+          if (beacon[index].immediate > 2) {
+            this.devices[index].status = 'Immediate';      
+            unusualEvent = "";
+            beacon[index].immediate = 1;
+            beacon[index].near = 0;
+            beacon[index].far = 0;
+          } else
           if (beacon[index].near > 2) {
             this.devices[index].status = 'Near';      
             unusualEvent = "";
-            beacon[index].near = 0;
-            beacon[index].mid = 0;
+            beacon[index].immediate = 0;
+            beacon[index].near = 1;
             beacon[index].far = 0;
-          }
-          if (beacon[index].mid > 2) {
-            this.devices[index].status = 'Middle';      
-            unusualEvent = "";
-            beacon[index].near = 0;
-            beacon[index].mid = 0;
-            beacon[index].far = 0;
-          }
+          } else
           if (beacon[index].far > 2) {    
-            this.vibration.vibrate(500);
-            this.devices[index].status = 'Far away';      
+//            this.vibration.vibrate(500);
+            this.devices[index].status = 'Far';      
             unusualEvent = "Object Faraway";
+            beacon[index].immediate = 0;
             beacon[index].near = 0;
-            beacon[index].mid = 0;
-            beacon[index].far = 0;
+            beacon[index].far = 1;
           }
         }
         else {

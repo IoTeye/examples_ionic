@@ -35,7 +35,7 @@ export class BLEscanPage {
 
   ionViewDidEnter() {
     console.log('ionViewDidEnter');
-    this.onToggleEnabled();
+//    this.onToggleEnabled();
   }
 
   scan() {
