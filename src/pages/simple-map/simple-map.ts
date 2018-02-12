@@ -14,13 +14,11 @@ import {
   LoadingController,
   Platform
 } from 'ionic-angular';
-import { ChangeDetectorRef } from '@angular/core';
+
 // Cordova plugins Device & Dialogs
 import { Device } from '@ionic-native/device';
 import { Dialogs } from '@ionic-native/dialogs';
 import { Vibration } from '@ionic-native/vibration';
-import { SpeechRecognition } from '@ionic-native/speech-recognition';
-
 
 // Handy color & sound constants.
 import COLORS from '../../lib/colors';
@@ -89,10 +87,6 @@ export class SimpleMapPage {
   immediate_threshold: number;
   display_items: number;
 
-  // Speech Recognition
-  matches: String[];
-  isRecording = false;
-
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -105,9 +99,7 @@ export class SimpleMapPage {
     private dialogs:Dialogs,
     private shareService: ShareService,
     private vibration:Vibration,
-    private speechRecognition: SpeechRecognition,
     private plt: Platform,
-    private cd: ChangeDetectorRef,
     private ngZone: NgZone
   ) {
     this.platform.ready().then(this.onDeviceReady.bind(this));
@@ -148,8 +140,6 @@ export class SimpleMapPage {
   onDeviceReady() {
     // We prompt you for a unique identifier in order to post locations tracker.transistorsoft.com
     this.configureBackgroundGeolocation();
-    this.getPermission();
-//    setInterval(this.startListening.bind(this), 10000);
   }
 
   private configureBackgroundGeolocation() {
@@ -725,39 +715,5 @@ export class SimpleMapPage {
     }
   }
   
-    // Speech Recognition
-    isIos() {
-      return this.plt.is('ios');
-    }
-  
-    stopListening() {
-      this.speechRecognition.stopListening().then(() => {
-        this.isRecording = false;
-      });
-    }
-   
-    getPermission() {
-      this.speechRecognition.hasPermission()
-        .then((hasPermission: boolean) => {
-          if (!hasPermission) {
-            this.speechRecognition.requestPermission();
-          }
-        });
-    }
-  
-    startListening() {
-      let options = {
-        language: 'en-US',
-        matches: 1,
-        showPopup: false,
-        prompt: '',
-        showPartial: true
-      }
-      this.speechRecognition.startListening(options).subscribe(matches => {
-        this.matches = matches;
-        this.cd.detectChanges();
-      });
-      this.isRecording = true;
-    }
 
 }

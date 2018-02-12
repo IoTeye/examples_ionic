@@ -146,7 +146,6 @@ export class AdvancedPage {
     });
     if (!this.state.enabled)
       this.state.enabled = true;
-    this.onToggleEnabled();
   }
 
   /**
