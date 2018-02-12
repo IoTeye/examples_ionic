@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BLE } from '@ionic-native/ble';
 import { Platform } from 'ionic-angular';
+import { BackgroundMode } from '@ionic-native/background-mode';
 
   var refreshIntervalId;
   var unusualEvent;
@@ -40,9 +41,6 @@ import { Platform } from 'ionic-angular';
 
 @Injectable()
 export class ShareService {
-	
-    firstName: string;
-    lastName: string;
   
     // BLE
   devices: any[] = [{'id':"",'status':""},{'id':"",'status':""},
@@ -56,28 +54,30 @@ export class ShareService {
   immediate_threshold: number;
   display_items: number;
 
-    constructor(
-        private platform:Platform, 
-        private ble: BLE) {
+    constructor(private platform:Platform, 
+                private ble: BLE,
+                private backgroundMode: BackgroundMode) {
 
-            this.scan_period = 5000;
-            this.far_threshold = -100;
-            this.near_threshold = -85;
-            this.immediate_threshold = -65;
-            this.display_items = 4;
+      this.scan_period = 5000;
+      this.far_threshold = -100;
+      this.near_threshold = -85;
+      this.immediate_threshold = -65;
+      this.display_items = 4;
+      refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
+      unusualEvent = '';
+
+      this.platform.ready().then(() => {
+          this.platform.pause.subscribe(() => {
+            this.backgroundMode.enable();
+            clearInterval(refreshIntervalId);
             refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
-            unusualEvent = '';
-
-        this.platform.ready().then(() => {
-            this.platform.pause.subscribe(() => {
-      //        clearInterval(refreshIntervalId);
-      //        refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
-            });
-            this.platform.resume.subscribe(() => {
-      //        clearInterval(refreshIntervalId);
-      //        refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
-            });
-          })
+          });
+          this.platform.resume.subscribe(() => {
+            this.backgroundMode.disable();
+            clearInterval(refreshIntervalId);
+            refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
+          });
+        })
     }
  
     set_scan_period(scan_period) {
@@ -111,79 +111,78 @@ export class ShareService {
 
 // BLE events 
     scan2() {  
-          this.setStatus('*************** Proximity Supervision');
-          this.ble.stopScan();
-            var i;
-            for (i=0; i<2; i++) {
-              beacon[i].invisible +=1;
-              if (beacon[i].invisible > 4) {    
-    //            this.vibration.vibrate(500);
-                this.devices[i].status = 'Invisible';
-                this.devices[i].id = beacon[i].id;
-                unusualEvent = "Object Invisible";
-              }
-            }
-  
-          this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
-            device => this.onDeviceDiscovered(device), 
-            error => this.scanError(error)
-          );
+      this.ble.stopScan();
+        var i;
+        for (i=0; i<2; i++) {
+          beacon[i].invisible +=1;
+          if (beacon[i].invisible > 4) {    
+//            this.vibration.vibrate(500);
+            this.devices[i].status = 'Invisible';
+            this.devices[i].id = beacon[i].id;
+            unusualEvent = "Object Invisible";
+          }
         }
+
+      this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
+        device => this.onDeviceDiscovered(device), 
+        error => this.scanError(error)
+      );
+    }
   
     onDeviceDiscovered(device) {
     
-  //      console.log('Discovered ' + JSON.stringify(device, null, 2));
-          if (device.id in DEFAULT_TRANSMITTERS){
-            var index = DEFAULT_TRANSMITTERS[device.id].index;
-   //         beacon[DEFAULT_TRANSMITTERS[device.id].index][0] = device.rssi;
-            this.devices[index].id = DEFAULT_TRANSMITTERS[device.id].id;
-            beacon[index].invisible = 0;
-            if (device.rssi > this.immediate_threshold) {
-              beacon[index].immediate += 1;
-            }
-            else if (device.rssi > this.near_threshold) {
-              beacon[index].near += 1;
-            } 
-            else {
-              beacon[index].far += 1;
-            }
-            if (beacon[index].immediate > 2) {
-              this.devices[index].status = 'Immediate';      
-              unusualEvent = "";
-              beacon[index].immediate = 1;
-              beacon[index].near = 0;
-              beacon[index].far = 0;
-            } else
-            if (beacon[index].near > 2) {
-              this.devices[index].status = 'Near';      
-              unusualEvent = "";
-              beacon[index].immediate = 0;
-              beacon[index].near = 1;
-              beacon[index].far = 0;
-            } else
-            if (beacon[index].far > 2) {    
-  //            this.vibration.vibrate(500);
-              this.devices[index].status = 'Far';      
-              unusualEvent = "Object Faraway";
-              unusualEventStr = DEFAULT_TRANSMITTERS[device.id].id + " Far away";
-              beacon[index].immediate = 0;
-              beacon[index].near = 0;
-              beacon[index].far = 1;
-            }
-          }
-          else {
-            return;
-          }
+//      console.log('Discovered ' + JSON.stringify(device, null, 2));
+      if (device.id in DEFAULT_TRANSMITTERS){
+        var index = DEFAULT_TRANSMITTERS[device.id].index;
+//         beacon[DEFAULT_TRANSMITTERS[device.id].index][0] = device.rssi;
+        this.devices[index].id = DEFAULT_TRANSMITTERS[device.id].id;
+        beacon[index].invisible = 0;
+        if (device.rssi > this.immediate_threshold) {
+          beacon[index].immediate += 1;
+        }
+        else if (device.rssi > this.near_threshold) {
+          beacon[index].near += 1;
+        } 
+        else {
+          beacon[index].far += 1;
+        }
+        if (beacon[index].immediate > 2) {
+          this.devices[index].status = 'Immediate';      
+          unusualEvent = "";
+          beacon[index].immediate = 1;
+          beacon[index].near = 0;
+          beacon[index].far = 0;
+        } else
+        if (beacon[index].near > 2) {
+          this.devices[index].status = 'Near';      
+          unusualEvent = "";
+          beacon[index].immediate = 0;
+          beacon[index].near = 1;
+          beacon[index].far = 0;
+        } else
+        if (beacon[index].far > 2) {    
+//            this.vibration.vibrate(500);
+          this.devices[index].status = 'Far';      
+          unusualEvent = "Object Faraway";
+          unusualEventStr = DEFAULT_TRANSMITTERS[device.id].id + " Far away";
+          beacon[index].immediate = 0;
+          beacon[index].near = 0;
+          beacon[index].far = 1;
+        }
+      }
+      else {
+        return;
+      }
 
-      }
+    }
     
-      // If location permission is denied, you'll end up here
-      scanError(error) {
-        this.setStatus('Error ' + error);
-      }
-    
-      setStatus(message) {
-        console.log(message);
-      }
+    // If location permission is denied, you'll end up here
+    scanError(error) {
+      this.setStatus('Error ' + error);
+    }
+  
+    setStatus(message) {
+      console.log(message);
+    }
 
 }

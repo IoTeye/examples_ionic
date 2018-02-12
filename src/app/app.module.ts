@@ -13,6 +13,7 @@ import { Toast } from '@ionic-native/toast';
 
 import { Device } from '@ionic-native/device';
 import { Dialogs } from '@ionic-native/dialogs';
+import { BackgroundMode } from '@ionic-native/background-mode';
 
 import { MyApp } from './app.component';
 import { ShareService } from '../services/share/share';
@@ -35,6 +36,7 @@ import { ShareService } from '../services/share/share';
     Device,
     Dialogs,
     BLE,
+    BackgroundMode,
     Vibration,
     SpeechRecognition,
     InAppBrowser,

@@ -32,7 +32,6 @@ declare var google;
 
 // Transistor Software Tracking Server Host
 const TRACKER_HOST = 'http://tracker.ioteyeinc.com:9000/locations/';
-//const TRACKER_HOST = 'http://192.168.1.9:9000/locations/';
 
 var refreshIntervalId;
 var unusualEvent;
@@ -99,7 +98,6 @@ export class SimpleMapPage {
     private dialogs:Dialogs,
     private shareService: ShareService,
     private vibration:Vibration,
-    private plt: Platform,
     private ngZone: NgZone
   ) {
     this.platform.ready().then(this.onDeviceReady.bind(this));
@@ -119,7 +117,6 @@ export class SimpleMapPage {
     // UI members.
     this.motionActivity = 'Activity';
     this.menuActive = false;
-    this.menu2Active = false;
 
     this.scan_period = 5000;
     this.far_threshold = -100;
@@ -135,7 +132,6 @@ export class SimpleMapPage {
     this.configureMap();
     this.onToggleEnabled();
   }
-
 
   onDeviceReady() {
     // We prompt you for a unique identifier in order to post locations tracker.transistorsoft.com
@@ -301,12 +297,6 @@ export class SimpleMapPage {
 
   onClickMainMenu(item) {
     this.menuActive = !this.menuActive;
-    this.playSound((this.menuActive) ? 'OPEN' : 'CLOSE');
-  }
-
-  onClickMainMenu2(item) {
-    this.menu2Active = !this.menu2Active;
-    this.playSound((this.menu2Active) ? 'OPEN' : 'CLOSE');
   }
 
   onClickSync() {
