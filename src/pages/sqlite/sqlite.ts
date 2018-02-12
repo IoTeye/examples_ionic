@@ -12,7 +12,6 @@ import { EditDataPage } from './edit-data/edit-data';
 export class SQLitePage {
 
   tasks: any = [];
-
   constructor(public navCtrl: NavController,
     private sqlite: SQLite) {}
 

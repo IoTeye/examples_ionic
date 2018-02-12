@@ -15,6 +15,7 @@ import { Device } from '@ionic-native/device';
 import { Dialogs } from '@ionic-native/dialogs';
 
 import { MyApp } from './app.component';
+import { ShareService } from '../services/share/share';
 
 @NgModule({
   declarations: [
@@ -33,13 +34,14 @@ import { MyApp } from './app.component';
     SplashScreen,
     Device,
     Dialogs,
-    {provide: ErrorHandler, useClass: IonicErrorHandler},
     BLE,
     Vibration,
     SpeechRecognition,
     InAppBrowser,
     SQLite,
-    Toast
+    Toast,
+    ShareService,
+    {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })
 export class AppModule {}

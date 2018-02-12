@@ -18,7 +18,6 @@ import { ChangeDetectorRef } from '@angular/core';
 // Cordova plugins Device & Dialogs
 import { Device } from '@ionic-native/device';
 import { Dialogs } from '@ionic-native/dialogs';
-import { BLE } from '@ionic-native/ble';
 import { Vibration } from '@ionic-native/vibration';
 import { SpeechRecognition } from '@ionic-native/speech-recognition';
 
@@ -27,6 +26,8 @@ import { SpeechRecognition } from '@ionic-native/speech-recognition';
 import COLORS from '../../lib/colors';
 import SOUND_MAP from '../../lib/sound-map';
 import { anchorDef } from '@angular/core/src/view/element';
+
+import { ShareService } from '../../services/share/share';
 
 // Google maps <script> is loaded in main index.html
 declare var google;
@@ -37,38 +38,7 @@ const TRACKER_HOST = 'http://tracker.ioteyeinc.com:9000/locations/';
 
 var refreshIntervalId;
 var unusualEvent;
-
-//  DEFAULT_TRANSMITTERS = new Set(['ec149b8cc77d','fed90f07c33d','fda6a51c4598']);
-var DEFAULT_TRANSMITTERS = {
-/*
-  'fed90f07c33d': {id:'beacon1'},
-  'fda6a51c4598': {id:'beacon2'},
-  'ec149b8cc77d': {id:'beacon3'},
-  'c935df1aa8bd': {id:'beacon4'},
-  'cf389feb5b65': {id:'beacon5'},
-  'fa1926067aae': {id:'beacon6'},
-*/
-// for android
-  'E8:3F:0B:A3:F6:12': {id:'b13-client1', index:0 },
-  'D2:3D:87:43:75:1F': {id:'b14-client2', index:1 },
-// for iphone
-  '5CD28DF8-8459-22E2-1D91-9D2F7B839E4F': {id:'b13-client1', index:0 },
-  'ED912309-81E7-5F8C-D572-6FA71324F126': {id:'b14-client2', index:1 },
-//  'b827ebf7fe86': {id:'mobile1t'}
-//  'b827eb6b0298': {id:'mobile1t'}
-};
-
-var beacon = [{id:'b13-client1', far:0,near:0,immediate:0,invisible:0},
-              {id:'b14-client2', far:0,near:0,immediate:0,invisible:0},
-              {id:'b1-client3', far:0,near:0,immediate:0,invisible:0},
-              {id:'b2-client4', far:0,near:0,immediate:0,invisible:0},
-              {id:'b3-client5', far:0,near:0,immediate:0,invisible:0},
-              {id:'b4-client6', far:0,near:0,immediate:0,invisible:0},
-              {id:'b5-client7', far:0,near:0,immediate:0,invisible:0},
-              {id:'b6-client8', far:0,near:0,immediate:0,invisible:0},
-              {id:'b7-client9', far:0,near:0,immediate:0,invisible:0},
-              {id:'b8-client0', far:0,near:0,immediate:0,invisible:0}
-            ];
+var unusualEventStr; 
 
 @IonicPage()
 @Component({
@@ -133,7 +103,7 @@ export class SimpleMapPage {
     private platform:Platform, 
     private device:Device,
     private dialogs:Dialogs,
-    private ble: BLE,
+    private shareService: ShareService,
     private vibration:Vibration,
     private speechRecognition: SpeechRecognition,
     private plt: Platform,
@@ -164,7 +134,7 @@ export class SimpleMapPage {
     this.near_threshold = -85;
     this.immediate_threshold = -65;
     this.display_items = 4;
-    refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
+    refreshIntervalId = setInterval(this.scan3.bind(this), this.scan_period);
     unusualEvent = '';
   }
 
@@ -173,6 +143,7 @@ export class SimpleMapPage {
     this.configureMap();
     this.onToggleEnabled();
   }
+
 
   onDeviceReady() {
     // We prompt you for a unique identifier in order to post locations tracker.transistorsoft.com
@@ -438,24 +409,26 @@ export class SimpleMapPage {
   onSetConfig(name) {
     if (name == 'scan_period') {
       // Set BLE
-      clearInterval(refreshIntervalId);
       this.scan_period = parseInt(this[name], 10);
-      refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
+      this.shareService.set_scan_period(this.scan_period);
       return;
     }
     if (name == 'far_threshold') {
       // Set BLE
       this.far_threshold = parseInt(this[name], 10);
+      this.shareService.set_far_threshold(this.far_threshold);
       return;
     }
     if (name == 'near_threshold') {
       // Set BLE
       this.near_threshold = parseInt(this[name], 10);
+      this.shareService.set_near_threshold(this.near_threshold);
       return;
     }
     if (name == 'immediate_threshold') {
       // Set BLE
       this.immediate_threshold = parseInt(this[name], 10);
+      this.shareService.set_immediate_threshold(this.immediate_threshold);
       return;
     }
     if (this.state[name] === this[name]) {
@@ -726,123 +699,31 @@ export class SimpleMapPage {
     this.bgGeo.playSound(soundId);
   }
 
-
-// BLE events 
-  scan() {
-  //      this.devices = [];  // clear list
-      this.setStatus('*************** Proximity Supervision');
-      this.ble.scan([],3).subscribe(
-        device => this.onDeviceDiscovered(device), 
-        error => this.scanError(error)
-      );
-    }
-  
-  scan2() {  
-        this.setStatus('*************** Proximity Supervision');
-        this.ble.stopScan();
-          var i;
-          for (i=0; i<2; i++) {
-            beacon[i].invisible +=1;
-            if (beacon[i].invisible > 2) {    
-  //            this.vibration.vibrate(500);
-              this.devices[i].status = 'Invisible';
-              this.devices[i].id = beacon[i].id;
-              unusualEvent = "Object Invisible";
-            }
-          }
-
-        this.ble.startScanWithOptions([],{ reportDuplicates: true }).subscribe(
-          device => this.onDeviceDiscovered(device), 
-          error => this.scanError(error)
-        );
-      }
-
-  onDeviceDiscovered(device) {
-  
-//      console.log('Discovered ' + JSON.stringify(device, null, 2));
-      this.ngZone.run(() => {
-        if (device.id in DEFAULT_TRANSMITTERS){
-          var index = DEFAULT_TRANSMITTERS[device.id].index;
- //         beacon[DEFAULT_TRANSMITTERS[device.id].index][0] = device.rssi;
-          this.devices[index].id = DEFAULT_TRANSMITTERS[device.id].id;
-          beacon[index].invisible = 0;
-          if (device.rssi > this.immediate_threshold) {
-            beacon[index].immediate += 1;
-          }
-          else if (device.rssi > this.near_threshold) {
-            beacon[index].near += 1;
-          } 
-          else {
-            beacon[index].far += 1;
-          }
-          if (beacon[index].immediate > 2) {
-            this.devices[index].status = 'Immediate';      
-            unusualEvent = "";
-            beacon[index].immediate = 1;
-            beacon[index].near = 0;
-            beacon[index].far = 0;
-          } else
-          if (beacon[index].near > 2) {
-            this.devices[index].status = 'Near';      
-            unusualEvent = "";
-            beacon[index].immediate = 0;
-            beacon[index].near = 1;
-            beacon[index].far = 0;
-          } else
-          if (beacon[index].far > 2) {    
-//            this.vibration.vibrate(500);
-            this.devices[index].status = 'Far';      
-            unusualEvent = "Object Faraway";
-            beacon[index].immediate = 0;
-            beacon[index].near = 0;
-            beacon[index].far = 1;
-          }
-        }
-        else {
-          return;
-        }
-    
-        if (unusualEvent == "Object Faraway") {      
-          this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + DEFAULT_TRANSMITTERS[device.id].id + " Far away"}}, 
-          function() {
-            console.log('set config success');
-          },
-          function() {
-            console.log('failed to setConfig');
-          });
-          this.bgGeo.getCurrentPosition((location) => {
-            console.log('- getCurrentPosition success: ', location);
-              unusualEvent = "";          
-              this.bgGeo.setConfig({extras: {"Unusualevent":unusualEvent}}, 
-                function() {
-                  console.log('set config success');
-                },
-                function() {
-                  console.log('failed to setConfig');
-                });
-          });
-        }
-  
+  scan3() {
+    this.devices= this.shareService.getDevices();
+    unusualEvent = this.shareService.getUnusualEvent();
+    unusualEventStr = this.shareService.getUnusualEventStr();
+    if (unusualEvent == "Object Faraway") {      
+      this.bgGeo.setConfig({extras: {"Unusualevent":(this.count).toString() + " " + unusualEventStr}}, 
+      function() {
+        console.log('set config success');
+      },
+      function() {
+        console.log('failed to setConfig');
+      });
+      this.bgGeo.getCurrentPosition((location) => {
+        console.log('- getCurrentPosition success: ', location);
+          unusualEvent = "";          
+          this.bgGeo.setConfig({extras: {"Unusualevent":unusualEvent}}, 
+            function() {
+              console.log('set config success');
+            },
+            function() {
+              console.log('failed to setConfig');
+            });
       });
     }
-  
-    // If location permission is denied, you'll end up here
-    scanError(error) {
-      this.setStatus('Error ' + error);
-      let toast = this.toastCtrl.create({
-        message: 'Error scanning for Bluetooth low energy devices',
-        position: 'middle',
-        duration: 5000
-      });
-      toast.present();
-    }
-  
-    setStatus(message) {
-      console.log(message);
-      this.ngZone.run(() => {
-        this.statusMessage = message;
-      });
-    }
+  }
   
     // Speech Recognition
     isIos() {

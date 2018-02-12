@@ -8,6 +8,7 @@ import {
 
 import { Dialogs } from '@ionic-native/dialogs';
 import { InAppBrowser } from '@ionic-native/in-app-browser';
+import { ShareService } from '../../services/share/share';
 
 const TRACKER_HOST = 'http://tracker.ioteyeinc.com:9000/';
 //const TRACKER_HOST = 'http://localhost:9000/';
@@ -36,9 +37,10 @@ export class HomePage {
     public navParams: NavParams,
     private platform: Platform,
     private dialogs: Dialogs,
-    private inappbrowser: InAppBrowser) {    
+    private inappbrowser: InAppBrowser,
+    shareService: ShareService
+  ) {    
     this.platform.ready().then(this.onDeviceReady.bind(this));
-  
   }
 
   ionViewDidLoad() {
