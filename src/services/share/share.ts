@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BLE } from '@ionic-native/ble';
 import { Platform } from 'ionic-angular';
 //import { BackgroundMode } from '@ionic-native/background-mode';
+import { LocalNotifications } from '@ionic-native/local-notifications';
 
   var refreshIntervalId;
   var unusualEvent;
@@ -55,8 +56,9 @@ export class ShareService {
   display_items: number;
 
     constructor(private platform:Platform, 
-                private ble: BLE
+                private ble: BLE,
 //                private backgroundMode: BackgroundMode
+                private localNotifications: LocalNotifications
               ) {
 
       this.scan_period = 5000;
@@ -129,10 +131,16 @@ export class ShareService {
         device => this.onDeviceDiscovered(device), 
         error => this.scanError(error)
       );
+      var localNotification = {
+        title: 'Bluetooth Device',
+        text: this.devices[0].id + ' (' + this.devices[0].status + ')'
+            + this.devices[1].id + ' (' + this.devices[1].status + ')',
+        sound: null,
+      };
+      this.localNotifications.schedule(localNotification);
     }
   
     onDeviceDiscovered(device) {
-    
 //      console.log('Discovered ' + JSON.stringify(device, null, 2));
       if (device.id in DEFAULT_TRANSMITTERS){
         var index = DEFAULT_TRANSMITTERS[device.id].index;
