@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BLE } from '@ionic-native/ble';
 import { Platform } from 'ionic-angular';
-import { BackgroundMode } from '@ionic-native/background-mode';
+//import { BackgroundMode } from '@ionic-native/background-mode';
 
   var refreshIntervalId;
   var unusualEvent;
@@ -55,8 +55,9 @@ export class ShareService {
   display_items: number;
 
     constructor(private platform:Platform, 
-                private ble: BLE,
-                private backgroundMode: BackgroundMode) {
+                private ble: BLE
+//                private backgroundMode: BackgroundMode
+              ) {
 
       this.scan_period = 5000;
       this.far_threshold = -100;
@@ -68,19 +69,20 @@ export class ShareService {
 
       this.platform.ready().then(() => {
           this.platform.pause.subscribe(() => {
-            this.backgroundMode.enable();
-            clearInterval(refreshIntervalId);
-            refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
+//            this.backgroundMode.enable();
+//            clearInterval(refreshIntervalId);
+//            refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
           });
           this.platform.resume.subscribe(() => {
-            this.backgroundMode.disable();
-            clearInterval(refreshIntervalId);
-            refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
+//            this.backgroundMode.disable();
+//            clearInterval(refreshIntervalId);
+//            refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
           });
         })
     }
  
     set_scan_period(scan_period) {
+        this.scan_period = scan_period;
         clearInterval(refreshIntervalId);
         refreshIntervalId = setInterval(this.scan2.bind(this), scan_period);
     }
