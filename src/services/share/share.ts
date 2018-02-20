@@ -69,13 +69,26 @@ export class ShareService {
       refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
       unusualEvent = '';
 
+      this.localNotifications.registerPermission();
+
       this.platform.ready().then(() => {
           this.platform.pause.subscribe(() => {
+/*
+            this.localNotifications.update({
+              id: 1,
+              title: 'Bluetooth Device',
+              text: this.devices[0].id + ' (' + this.devices[0].status + ')'
+                  + this.devices[1].id + ' (' + this.devices[1].status + ')',
+              every: 'minute',
+              sound: null
+            });
+*/
 //            this.backgroundMode.enable();
 //            clearInterval(refreshIntervalId);
 //            refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
           });
           this.platform.resume.subscribe(() => {
+//            this.localNotifications.clear(1);
 //            this.backgroundMode.disable();
 //            clearInterval(refreshIntervalId);
 //            refreshIntervalId = setInterval(this.scan2.bind(this), this.scan_period);
@@ -131,13 +144,15 @@ export class ShareService {
         device => this.onDeviceDiscovered(device), 
         error => this.scanError(error)
       );
-      var localNotification = {
+            
+      this.localNotifications.schedule({
+        id: 1,
         title: 'Bluetooth Device',
         text: this.devices[0].id + ' (' + this.devices[0].status + ')'
             + this.devices[1].id + ' (' + this.devices[1].status + ')',
-        sound: null,
-      };
-      this.localNotifications.schedule(localNotification);
+ //       at: 'now',
+        sound: null
+      });
     }
   
     onDeviceDiscovered(device) {
